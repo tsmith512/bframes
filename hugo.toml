@@ -1,0 +1,27 @@
+baseURL = 'https://stream.tsmith.com/'
+author = 'Taylor Smith'
+languageCode = 'en-us'
+title = 'Stream Notes'
+
+enableEmoji = true
+# enableGitInfo = true
+enableRobotsTXT = true
+writeStats = true
+
+# I have a lot of static HTML from posts about experiments and I'm the only
+# author, so I accept this -- unsafe just allows raw HTML.
+[markup.goldmark.renderer]
+  unsafe = true
+
+[minify]
+  minifyOutput = true
+  [tdewolff.html]
+    keepWhitespace = false
+
+[module]
+  [[module.imports]]
+    path = "github.com/colinwilson/lotusdocs"
+    disable = false
+  [[module.imports]]
+    path = "github.com/gohugoio/hugo-mod-bootstrap-scss/v5"
+    disable = false
