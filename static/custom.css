@@ -1,0 +1,13 @@
+video, img {
+  max-width: 100%;
+  height: auto;
+}
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 200;
+}
+
+code, pre {
+  font-family: 'IBM Plex Mono', monospace;
+}
