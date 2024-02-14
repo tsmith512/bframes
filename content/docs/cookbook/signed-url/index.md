@@ -77,7 +77,7 @@ token on a video. Give it a try.
       const response = await fetch('/api/getSignedURL', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(document.getElementById('video_id').value),
+        body: JSON.stringify({video_id: document.getElementById('video_id').value}),
       });
 
       if (response.ok) {
