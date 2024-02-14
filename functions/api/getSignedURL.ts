@@ -54,6 +54,7 @@ const getSignedURL = async (video_id: string, key_id: string, key_jwk: string): 
 
   const data = {
     "sub": video_id,
+    "kid": key_id,
     "exp": expiry,
     "accessRules": [
       {
