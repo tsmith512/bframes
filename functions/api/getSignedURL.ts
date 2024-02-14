@@ -1,3 +1,6 @@
+// Be sure to also set nodejs_compat flag in wrangler.toml or Pages Functions config
+import { Buffer } from 'node:buffer';
+
 export async function onRequest(context) {
   // Contents of context object
   const {
@@ -46,8 +49,7 @@ const getSignedURL = async (video_id: string, key_id: string, key_jwk: string): 
 
   const headers = {
     "alg": "RS256",
-    // KEY ID:
-    "kid": key_id
+    "kid": key_id,
   };
 
   const data = {
