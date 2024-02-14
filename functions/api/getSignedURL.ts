@@ -10,7 +10,19 @@ export async function onRequest(context) {
     data, // arbitrary space for passing data between middlewares
   } = context;
 
-  return new Response('Hello World', {
+  if (request.method === 'GET') {
+    return new Response('Please POST a {video_id: ""} payload.', { status: 405 });
+  }
+
+  const input = await request.json();
+
+  if (!input?.video_id) {
+    return new Response('Please POST a {video_id: ""} payload.', { status: 400 });
+  }
+
+  const token = await getVodSignedURL(input.video_id);
+
+  return new Response(token, {
     status: 200,
     headers: {
       'Cache-Control': 'max-age=0, no-cache, must-revalidate',
@@ -26,7 +38,7 @@ export async function onRequest(context) {
  * @param id Video ID to generate the Signed URL for
  * @returns
  */
-const getVodSignedURL = async (id: string): Promise<string | false> => {
+const getVodSignedURL = async (id: string): Promise<string> => {
   // Six hours from now, as a Unix Timestamp
   const expiry = (new Date().getTime() / 1000) + (6 * 60 * 60);
 
