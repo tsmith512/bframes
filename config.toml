@@ -1,5 +1,5 @@
 title = 'Stream Notes'
-baseURL = 'https://stream.tsmith.com/'
+baseURL = 'http://localhost:1313/'
 author = 'Taylor Smith'
 languageCode = 'en-us'
 theme = 'hugo-geekdoc'
