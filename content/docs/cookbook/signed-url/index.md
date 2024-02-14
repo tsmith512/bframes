@@ -9,14 +9,13 @@ Review the "[Secure Your Stream](https://developers.cloudflare.com/stream/viewin
 page in Cloudflare Stream Developer Docs for full info.
 {{< / hint >}}
 
-Signed URLs are a mechanism to use authenticated URLs for accessing video playback
-and assets. They can be used to generate one-off links _within your own application_
-to play protected content without making Cloudflare API calls for eache event.
+Signed URLs are authenticated URLs to play protected videos.
+They are one-off links generated _within your own application_ using a signing
+key you can get from Stream.
 
 ## Overview
 
 ``` mermaid
-
   sequenceDiagram
 
   actor Admin
@@ -38,6 +37,10 @@ to play protected content without making Cloudflare API calls for eache event.
   Stream -->> User: Allow video playback
 ```
 
+Storing the signing key in a Worker and creating signed URLs _there_ eliminates
+the need to make Cloudflare API calls each time and also prevents leaking the
+signing key (or API tokens) to an end-user's computer.
+
 ## Demo
 
 This video should not load:
@@ -57,12 +60,8 @@ The video at `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/ce800be43a9
 requires signed URLs to be viewed. Replacing that video ID in the URL with a signed
 URL token will make it playable.
 
-This form can send a Video ID to a Worker that will create and return a signed URL
-token on a video. Storing the key in a Worker and signing URLs there eliminates
-the need to make Cloudflare API calls while also preventing leaking the signing
-key to an end-user's computer.
-
-Give it a try.
+This form can send a Video ID to a Worker that will generate a signed URL for a
+video. Give it a try.
 
 <div>
   <form>
@@ -70,7 +69,7 @@ Give it a try.
     <input type="text" id="video_id" value="ce800be43a9772f4bb02f35b860fb516" />
     <input type="submit" id="submit" value="Generate" />
     <p>Worker Results:</p>
-    <pre id="output"></pre>
+    <pre id="output" style="word-wrap: break-word; overflow-x: hidden; white-space: break-spaces;"></pre>
     <p id="explainer"></p>
   </form>
 
@@ -89,8 +88,8 @@ Give it a try.
         const newSrc = `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/${output.token}/iframe`;
 
         document.getElementById('player_iframe').src = newSrc;
-        document.getElementById('output').innerText = `Token: ${output.token}\n\nNew embed source: ${newSrc}`;
-        document.getElementById('explainer').innerText = `Player embed code updated with the signed token. Look again at the player.`;
+        document.getElementById('output').innerText = `>> TOKEN:\n${output.token}\n\n>> NEW EMBED SOURCE:\n${newSrc}`;
+        document.getElementById('explainer').innerText = `Player embed code has been updated with the signed token. Look at the player again, it should be working now.`;
       } else {
         document.getElementById('explainer').innerText = 'Could not get a signed token; this demo may be broken.';
       }
