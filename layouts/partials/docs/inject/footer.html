@@ -1,0 +1,12 @@
+{{ if .Page.Store.Get "hasMermaid" }}
+  <script type="module">
+    import mermaid from '/vendor/mermaid/package/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'neutral',
+      themeVariables: {
+        fontFamily: "IBM Plex Sans,Helvetica,Arial,sans-serif",
+      },
+    });
+  </script>
+{{ end }}

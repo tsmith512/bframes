@@ -1,7 +1,6 @@
 ---
 weight: 100
 title: "Players"
-draft: false
 ---
 
 # Player Chocies

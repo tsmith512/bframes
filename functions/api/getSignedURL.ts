@@ -25,7 +25,7 @@ export async function onRequest(context) {
 
   const token = await getSignedURL(input.video_id, env.SIGNED_URL_KEY_ID, env.SIGNED_URL_KEY_JWK);
 
-  return new Response(token, {
+  return new Response(JSON.stringify({token}), {
     status: 200,
     headers: {
       'Cache-Control': 'max-age=0, no-cache, must-revalidate',
