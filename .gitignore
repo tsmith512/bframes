@@ -1,14 +1,8 @@
 # dependencies
 /node_modules
+/functions/node_modules
 /.pnp
 .pnp.js
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
 
 # production
 /build
@@ -23,20 +17,16 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 
 *.zip
-.env
-public/fonts
 
 # Generated files by hugo
 /public/
@@ -51,5 +41,3 @@ hugo.linux
 
 # Temporary lock file while building
 /.hugo_build.lock
-themes
-!themes/.gitkeep

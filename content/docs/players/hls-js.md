@@ -1,15 +1,16 @@
 ---
 weight: 101
 title: "HLS.js"
-description: "."
 ---
+
+# HLS.js
 
 {{< raw >}}
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
 <video controls id="video"></video>
 <script>
   var video = document.getElementById('video');
-  var videoSrc = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+  var videoSrc = 'https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/6fc1827b329cf8d79dbae8f661786235/manifest/video.m3u8';
   if (Hls.isSupported()) {
     var hls = new Hls();
     hls.loadSource(videoSrc);

@@ -2,7 +2,7 @@ title = 'Stream Notes'
 baseURL = 'http://localhost:1313/'
 author = 'Taylor Smith'
 languageCode = 'en-us'
-theme = 'hugo-geekdoc'
+theme = 'hugo-book'
 
 enableEmoji = true
 enableGitInfo = true
@@ -19,43 +19,9 @@ disablePathToLower = true
   [markup.tableOfContents]
     startLevel = 1
     endLevel = 9
+
 [params]
-  geekdocToC = 3
-
-  # (Optional, default static/brand.svg) Set the path to a logo for the Geekdoc
-  # relative to your 'static/' folder.
-  # @TODO: geekdocLogo = "logo.png"
-
-  # (Optional, default false) Collapse all menu entries, can not be overwritten
-  # per page if enabled. Can be enabled per page via 'geekdocCollapseSection'.
-  geekdocCollapseAllSections = true
-
-  # (Optional, default none) Set source repository location. Used for 'Edit page' links.
-  # You can also specify this parameter per page in front matter.
-  geekdocRepo = "https://github.com/tsmith512/stream-notes"
-
-  # (Optional, default none) Enable 'Edit page' links. Requires 'geekdocRepo' param
-  # and the path must point to the parent directory of the 'content' folder.
-  # You can also specify this parameter per page in front matter.
-  # @TODO: geekdocEditPath = "edit/main/exampleSite"
-
-  # (Optional, default none) Add a link to your Legal Notice page to the site footer.
-  # It can be either a remote url or a local file path relative to your content directory.
-  # @TODO: geekdocLegalNotice = "https://blog.example.com/legal"
-
-  # (Optional, default none) Add a link to your Privacy Policy page to the site footer.
-  # It can be either a remote url or a local file path relative to your content directory.
-  # @TODO: geekdocPrivacyPolicy = "/privacy"
-
-  # (Optional, default true) Enable or disable the JavaScript based color theme toggle switch. The CSS based
-  # user preference mode still works.
-  geekdocDarkModeToggle = true
-
-  # (Optional, default true) Display a "Back to top" link in the site footer.
-  geekdocBackToTop = false
-
-  # (Optional, default none) Adds a "Content licensed under <license>" line to the footer.
-  # Could be used if you want to define a default license for your content.
-  [params.geekdocContentLicense]
-    name = "CC BY-SA 4.0"
-    link = "https://creativecommons.org/licenses/by-sa/4.0/"
+  BookTheme = 'dark'
+  BookSection = 'docs'
+  BookRepo = 'https://github.com/tsmith512/stream-notes'
+  BookSearch = false

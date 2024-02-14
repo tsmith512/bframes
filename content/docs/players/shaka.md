@@ -1,8 +1,9 @@
 ---
 weight: 102
 title: "Shaka Player"
-description: "."
 ---
+
+# Shaka Player
 
 {{< raw >}}
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.5.0/dist/shaka-player.compiled.min.js"></script>
@@ -10,7 +11,7 @@ description: "."
 <video id="video" controls></video>
 <script>
   const manifestUri =
-      'https://storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd';
+      'https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/6fc1827b329cf8d79dbae8f661786235/manifest/video.m3u8';
 
   function initApp() {
     // Install built-in polyfills to patch browser incompatibilities.
