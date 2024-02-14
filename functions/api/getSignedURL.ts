@@ -20,7 +20,7 @@ export async function onRequest(context) {
     return new Response('Please POST a {video_id: ""} payload.', { status: 400 });
   }
 
-  const token = await getVodSignedURL(input.video_id);
+  const token = await getSignedURL(input.video_id, env.SIGNED_URL_KEY_ID, env.SIGNED_URL_KEY_JWK);
 
   return new Response(token, {
     status: 200,
@@ -38,7 +38,7 @@ export async function onRequest(context) {
  * @param id Video ID to generate the Signed URL for
  * @returns
  */
-const getVodSignedURL = async (id: string): Promise<string> => {
+const getSignedURL = async (video_id: string, key_id: string, key_jwk: string): Promise<string> => {
   // Six hours from now, as a Unix Timestamp
   const expiry = (new Date().getTime() / 1000) + (6 * 60 * 60);
 
@@ -47,11 +47,11 @@ const getVodSignedURL = async (id: string): Promise<string> => {
   const headers = {
     "alg": "RS256",
     // KEY ID:
-    "kid": process.env.SIGNED_URL_KEY_ID
+    "kid": key_id
   };
 
   const data = {
-    "sub": id,
+    "sub": video_id,
     "exp": expiry,
     "accessRules": [
       {
@@ -74,7 +74,7 @@ const getVodSignedURL = async (id: string): Promise<string> => {
     .replace(/\//g, '_');
 
   const token = `${payloadHeaders}.${payloadData}`;
-  const jwk = JSON.parse(atob(process.env.SIGNED_URL_KEY_JWK as string));
+  const jwk = JSON.parse(atob(key_jwk as string));
 
   const key = await crypto.subtle.importKey(
     "jwk", jwk,
