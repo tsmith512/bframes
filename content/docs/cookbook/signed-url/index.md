@@ -58,14 +58,18 @@ requires signed URLs to be viewed. Replacing that video ID in the URL with a sig
 URL token will make it playable.
 
 This form can send a Video ID to a Worker that will create and return a signed URL
-token on a video. Give it a try.
+token on a video. Storing the key in a Worker and signing URLs there eliminates
+the need to make Cloudflare API calls while also preventing leaking the signing
+key to an end-user's computer.
+
+Give it a try.
 
 <div>
   <form>
     <p>Video ID:</p>
     <input type="text" id="video_id" value="ce800be43a9772f4bb02f35b860fb516" />
     <input type="submit" id="submit" value="Generate" />
-    <p>Signed URL Token:</p>
+    <p>Worker Results:</p>
     <pre id="output"></pre>
     <p id="explainer"></p>
   </form>
@@ -82,10 +86,11 @@ token on a video. Give it a try.
 
       if (response.ok) {
         const output = await response.json();
+        const newSrc = `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/${output.token}/iframe`;
 
-        document.getElementById('output').innerText = output.token;
-        document.getElementById('player_iframe').src = `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/${output.token}/iframe`;
-        document.getElementById('explainer').innerText = 'Player embed code updated with the signed token. Try to watch it now.';
+        document.getElementById('player_iframe').src = newSrc;
+        document.getElementById('output').innerText = `Token: ${output.token}\n\nNew embed source: ${newSrc}`;
+        document.getElementById('explainer').innerText = `Player embed code updated with the signed token. Look again at the player.`;
       } else {
         document.getElementById('explainer').innerText = 'Could not get a signed token; this demo may be broken.';
       }
