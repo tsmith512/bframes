@@ -22,6 +22,6 @@ disablePathToLower = true
 
 [params]
   BookTheme = 'light'
-  BookSection = 'docs'
+  BookSection = '*'
   BookRepo = 'https://github.com/tsmith512/stream-notes'
   BookSearch = false
