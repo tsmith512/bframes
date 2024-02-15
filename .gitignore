@@ -30,6 +30,7 @@ yarn-error.log*
 *.tgz
 
 static/vendor
+static/pricing-calculator.js
 
 # Generated files by hugo
 /public/

@@ -6,4 +6,4 @@ title: Pricing
 
 <div id="root"></div>
 
-<script src="/stream-pricing/build/static/js/main.449f2fa8.js"></script>
+<script src="/pricing-calculator.js"></script>
