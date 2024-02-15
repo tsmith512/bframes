@@ -1,5 +1,4 @@
 ---
-weight: 102
 title: "Shaka Player"
 ---
 

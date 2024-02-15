@@ -1,6 +1,7 @@
 ---
 weight: 100
 title: "Players"
+bookCollapseSection: true
 ---
 
 # Player Chocies

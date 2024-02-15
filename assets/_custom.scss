@@ -6,4 +6,16 @@ pre, code {
   font-size: 0.825em;
 }
 
+pre.mermaid {
+  background-color: transparent;
+
+  &[data-processed] {
+    text-align: center;
+  }
+
+  svg {
+    margin: 0 auto;
+  }
+}
+
 @import "syntax";

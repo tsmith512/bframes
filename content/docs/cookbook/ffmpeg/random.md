@@ -1,6 +1,5 @@
 ---
 title: Random Snippets
-weight: 10
 ---
 
 # Random FFMPEG Snippets
@@ -13,4 +12,4 @@ weight: 10
 
 Use this to open a camera settings panel that will allow manual config of webcam
 exposure settings. Helps if you sit in front of a window and the auto-exposure
-swings a lot.
+swings a lot. Replace the camera model name with whatever yours is called.

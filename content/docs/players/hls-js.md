@@ -1,5 +1,4 @@
 ---
-weight: 101
 title: "HLS.js"
 ---
 

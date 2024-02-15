@@ -1,6 +1,5 @@
 ---
 title: Broadcast
-weight: 5
 ---
 
 # Broadcasting with FFMPEG

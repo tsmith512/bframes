@@ -1,7 +1,8 @@
 ---
 title: FFMPEG
+bookCollapseSection: true
 ---
 
-# Random FFMPEG Pieces
+# Random FFMPEG Tidbits
 
-There are always little bits...
+Slowing collecting some useful FFMPEG-related magic spells here.
