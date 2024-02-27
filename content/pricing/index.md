@@ -1,8 +1,7 @@
 ---
 title: Pricing
+bookToC: false
 ---
-
-# Pricing Calculator
 
 <div id="root"></div>
 
