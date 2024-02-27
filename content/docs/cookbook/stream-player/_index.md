@@ -5,4 +5,5 @@ bookCollapseSection: true
 
 # Stream Player Experiments
 
-With the Built-in Player API...
+Some examples of things you can do with our
+[Built-in Player API](https://developers.cloudflare.com/stream/viewing-videos/using-the-stream-player/).

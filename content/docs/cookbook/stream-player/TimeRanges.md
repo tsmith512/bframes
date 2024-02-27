@@ -11,10 +11,10 @@ It tracks what pieces of a video have been watched within a session.
 {{< raw >}}
 <div style="position: relative; padding-top: 56.25%;">
   <iframe
-    src="https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/63c901ecb7f7cf4d4500d67f89c27efe/iframe?poster=https%3A%2F%2Fcustomer-igynxd2rwhmuoxw8.cloudflarestream.com%2F63c901ecb7f7cf4d4500d67f89c27efe%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600"
+    src="https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/46c8b7f480d410840758c1cb14a72e47/iframe?poster=https%3A%2F%2Fcustomer-igynxd2rwhmuoxw8.cloudflarestream.com%2F46c8b7f480d410840758c1cb14a72e47%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600"
     loading="lazy"
     style="border: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;"
-    allow="accelerometer; gyroscope; encrypted-media; picture-in-picture;"
+    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
     allowfullscreen="true"
     id="stream-player"
   ></iframe>
@@ -52,8 +52,6 @@ ranges populate in the progress bar.
   });
 </script>
 {{< /raw >}}
-
-_This demo video uses ["Smooth Piano for Documentaries" by UNIVERSFIELD](https://freesound.org/people/UNIVERSFIELD/sounds/723975/) as background music._
 
 <style>
   #watched {

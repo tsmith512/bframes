@@ -6,7 +6,7 @@ title: Downloading
 
 ## Download Audio Only from HLS
 
-``` powershell
+```
 ffmpeg.exe -i "https://customer-CODE.cloudflarestream.com/VIDEO_ID/manifest/video.m3u8" -vn -acodec copy output.m4a
 ```
 
