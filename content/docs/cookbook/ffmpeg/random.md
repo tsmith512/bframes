@@ -42,3 +42,12 @@ mobile-overlay.mp4
 I had trouble with this command exiting without producing output. Check that the
 `fontfile` you reference exists and that you quote the right parts of your filter
 `-filter_complex "[input]drawtext='...:its options, dont quote text but\: escape colons:...'[output]"`
+
+```
+ffmpeg.exe -i AUDIO.ogg `
+-f lavfi -i "color=color=black:size=1920x1080:r=30" `
+-vf 'drawtext=fontfile=/Windows/fonts/ARIALNB.TTF:fontsize=128:fontcolor=white:text="Test Advertisement %{pts\\:hms}":x=(w-text_w)/2:y=(h-text_h)/2' `
+-t 15 -codec:a aac -b:a 128k -codec:v libx264 ad-test.mp4
+```
+
+Generated the 15 second "advertisement" video example.
