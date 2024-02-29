@@ -1,6 +1,7 @@
 ---
 title: Pricing
 bookToC: false
+bookHidden: true
 ---
 
 <div id="root"></div>
