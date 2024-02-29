@@ -3,7 +3,7 @@
     "@cloudflare/workers-types": "^4.20221111.1",
     "typescript": "^4.9.4"
   },
-  "name": "stream-notes-functions",
+  "name": "bframes-functions",
   "version": "1.0.0",
   "author": "",
   "license": "ISC",

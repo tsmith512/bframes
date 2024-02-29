@@ -98,5 +98,5 @@ video using my signing key. Give it a try.
   </script>
 </div>
 
-[Read the code.](https://github.com/tsmith512/stream-notes/blob/trunk/functions/api/getSignedURL.ts) It's a "Pages Function," but it's just a Worker script within
+[Read the code.](https://github.com/tsmith512/bframes/blob/trunk/functions/api/getSignedURL.ts) It's a "Pages Function," but it's just a Worker script within
 this repository.

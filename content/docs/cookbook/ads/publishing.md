@@ -16,7 +16,7 @@ draft: true
   document.getElementById('generate').addEventListener('click', (e) => {
     e.preventDefault();
 
-    let vastURI = 'https://stream-notes.tsmith.com/api/vast/getVast?';
+    let vastURI = 'https://bframes.tsmith.com/api/vast/getVast?';
 
     if (skippable.checked) {
       vastURI += 'skippable=true';

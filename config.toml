@@ -1,5 +1,5 @@
-title = 'Stream Notes'
-baseURL = 'http://localhost:1313/'
+title = 'B Frames'
+baseURL = 'https://bframes.tsmith.com/'
 author = 'Taylor Smith'
 languageCode = 'en-us'
 theme = 'hugo-book'
@@ -23,5 +23,5 @@ disablePathToLower = true
 [params]
   BookTheme = 'light'
   BookSection = '*'
-  BookRepo = 'https://github.com/tsmith512/stream-notes'
+  BookRepo = 'https://github.com/tsmith512/bframes'
   BookSearch = false
