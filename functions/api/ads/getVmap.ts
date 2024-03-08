@@ -61,7 +61,7 @@ export async function onRequest(context) {
   const vmapOutput =
 `<?xml version="1.0" encoding="UTF-8"?>
 <vmap:VMAP xmlns:vmap="http://www.iab.net/videosuite/vmap" version="1.0">
-  ${adUnits.join('\n\n')}
+  ${adUnits.join()}
 </vmap:VMAP>
 `;
 

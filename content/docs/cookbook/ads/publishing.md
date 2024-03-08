@@ -1,28 +1,109 @@
 ---
-title: VAST Custom Publishing
-draft: true
+title: VAST/VMAP Building
+draft: false
 ---
 
-# Publishing Custom Ads with VAST
+# Publishing Custom Ads with VAST and VMAP
 
-<input type="checkbox" id="skippable" /> Skippable?
-<br /><button id="generate">Generate</button>
+Here is a super rudimentary builder to create a VAST or VMAP payload with a
+sample video ad. It shows how to use an HLS or DASH manifest as the `MediaFile`
+component of a single VAST ad unit, then how to reference VAST units in a VMAP
+playlist.
+
+<form>
+  <table>
+    <tr>
+      <th>
+        <input type="radio" name="type" value="vast" checked /> VAST
+      </th>
+      <td>
+        Single Ad
+      </td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>
+        <input type="checkbox" name="vast-skippable" /> Skippable?
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <input type="radio" name="type" value="vmap" checked /> VMAP
+      </th>
+      <td>
+        Multiple Ads
+      </td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>
+        <input type="checkbox" name="vmap-skippable" /> Skippable?
+      </td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>
+        <input type="checkbox" name="vmap-preroll" /> Preroll?
+        <br /><input type="checkbox" name="vmap-postroll" /> Postroll?
+      </td>
+    </tr>
+    </tr>
+    <tr>
+      <th></th>
+      <td>
+        <input type="checkbox" name="vmap-mid" /> During playback?
+        <br />Start offset: <input type="text" name="vmap-mid-timing" placeholder="HH:MM:SS" pattern="\d{2}:\d{2}:\d{2}" />
+      </td>
+    </tr>
+  </table>
+</form>
+
+<style>
+  input:invalid {
+    background-color: #FCC;
+  }
+</style>
 
 <pre id="vast"></pre>
 
 <script>
   const skippable = document.getElementById('skippable');
 
-  document.getElementById('generate').addEventListener('click', (e) => {
+  const update = (e) => {
     e.preventDefault();
 
-    let vastURI = 'https://bframes.tsmith.com/api/vast/getVast?';
+    const form = document.forms[0];
+    console.log(form.elements);
 
-    if (skippable.checked) {
-      vastURI += 'skippable=true';
+    let adURI = ['https://bframes.tsmith.com/api/ads/'];
+
+    switch (form.type.value) {
+      case 'vast':
+        adURI.push('getVast');
+        if (form.elements['vast-skippable'].checked) {
+          adURI.push('skippable=true');
+        }
+        break;
+      case 'vmap':
+        adURI.push('getVmap');
+        if (form.elements['vmap-skippable'].checked) {
+          adURI.push('skippable=true');
+        }
+        if (form.elements['vmap-preroll'].checked) {
+          adURI.push('pre=true');
+        }
+        if (form.elements['vmap-postroll'].checked) {
+          adURI.push('post=true');
+        }
+        if (form.elements['vmap-mid'].checked) {
+          adURI.push('mid=' + encodeURIComponent(form.elements['vmap-mid-timing'].value));
+        }
+        break;
     }
 
-    fetch(vastURI)
+    const finalAdURI = adURI[0] + adURI[1] + '?' + adURI.slice(2).join('&');
+
+    fetch(finalAdURI)
     .then(async (r) => {
       const el = document.getElementById('vast');
       if (r.ok) {
@@ -32,7 +113,12 @@ draft: true
         vast.innerText = `${r.status}: ${r.statusText}`;
       }
     });
-  });
+  };
+
+  document
+    .querySelectorAll('input[type="radio"], input[type="checkbox"]')
+    .forEach(e => e.addEventListener('change', update));
+
 </script>
 
 ## References

@@ -26,7 +26,7 @@ export async function onRequest(context) {
 
   const { searchParams } = new URL(request.url);
 
-  const adVideo = `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/a81eb4ccd00a0d4e559a21f397692bef`;
+  const adVideo = `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/6cc09e665af385810ff93cb0e52662b7`;
   const skippable = searchParams.get('skippable') ? '00:00:10.000' : false;
 
   const vastOutput =
