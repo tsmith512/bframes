@@ -26,34 +26,42 @@ export async function onRequest(context) {
 
   const { searchParams } = new URL(request.url);
 
-  const adVast = `https://bframes.tsmith.com/api/ads/getVast?skippable=true`;
+  const skippable = searchParams.get('skippable') ? true : false;
+  const preroll = searchParams.get('pre') ? true : false;
+  const midroll = searchParams.get('mid') ?? false;
+  const postroll = searchParams.get('post') ? true : false;
+
+  // Make our ad skippable or not
+  const adVast = `https://bframes.tsmith.com/api/ads/getVast${skippable ? '?skippable=true' : ''}`;
+
+
+  // Collect the ad units we'll use
+  const adUnits: string[] = [];
+
+  const generateAdUnit = (url, time, label) => `
+    <vmap:AdBreak timeOffset="${time}" breakType="linear" breakId="${label}">
+    <vmap:AdSource id="${label}-ad-1" allowMultipleAds="false" followRedirects="true">
+      <vmap:AdTagURI templateType="vast3">
+        <![CDATA[${url}]]>
+      </vmap:AdTagURI>
+    </vmap:AdSource>
+    </vmap:AdBreak>
+  `;
+
+  if (preroll) {
+    adUnits.push(generateAdUnit(adVast, 'start', 'preroll'));
+  }
+  if (midroll !== false) {
+    adUnits.push(generateAdUnit(adVast, midroll, 'mid'));
+  }
+  if (postroll) {
+    adUnits.push(generateAdUnit(adVast, 'end', 'postroll'));
+  }
 
   const vmapOutput =
 `<?xml version="1.0" encoding="UTF-8"?>
 <vmap:VMAP xmlns:vmap="http://www.iab.net/videosuite/vmap" version="1.0">
-  <vmap:AdBreak timeOffset="start" breakType="linear" breakId="preroll">
-  <vmap:AdSource id="preroll-ad-1" allowMultipleAds="false" followRedirects="true">
-    <vmap:AdTagURI templateType="vast3">
-      <![CDATA[${adVast}]]>
-    </vmap:AdTagURI>
-  </vmap:AdSource>
-  </vmap:AdBreak>
-
-  <vmap:AdBreak timeOffset="00:00:15" breakType="linear" breakId="midroll">
-  <vmap:AdSource id="midroll-ad-1" allowMultipleAds="false" followRedirects="true">
-    <vmap:AdTagURI templateType="vast3">
-      <![CDATA[${adVast}]]>
-    </vmap:AdTagURI>
-  </vmap:AdSource>
-  </vmap:AdBreak>
-
-  <vmap:AdBreak timeOffset="end" breakType="linear" breakId="postroll">
-  <vmap:AdSource id="postroll-ad-1" allowMultipleAds="false" followRedirects="true">
-    <vmap:AdTagURI templateType="vast3">
-      <![CDATA[${adVast}]]>
-    </vmap:AdTagURI>
-  </vmap:AdSource>
-  </vmap:AdBreak>
+  ${adUnits.join('\n\n')}
 </vmap:VMAP>
 `;
 
