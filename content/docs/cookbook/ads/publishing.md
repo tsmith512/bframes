@@ -38,6 +38,7 @@ draft: true
 ## References
 
 - [Digital Video Ad Serving Template (VAST) Spec](https://iabtechlab.com/standards/vast/), IAB
+- [Digital Video Multiple Ad Playlist (VMAP) Spec](https://iabtechlab.com/standards/video-multiple-ad-playlist-vmap/), IAB
 - [Build your own VAST 3.0 response XML](https://aws.amazon.com/blogs/media/build-your-own-vast-3-0-response-xml-to-test-with-aws-elemental-mediatailor/), AWS
 - [Create a custom VAST XML ad tag (Web Player)](https://docs.jwplayer.com/players/docs/create-a-custom-vast-xml-ad-tag), JWPlayer
 - [Creating Your Own VAST 3.0 Response XML](https://www.broadpeak.io/creating-your-own-vast-3-0-response-xml/), Broadpeak
