@@ -56,7 +56,10 @@ export async function onRequest(context) {
 
 
   return new Response(JSON.stringify(payload), {
-    headers: { 'content-type': 'application/json'}
+    headers: {
+      'content-type': 'application/json',
+      'cache-control': 'max-age=0, no-cache, must-revalidate',
+      ...corsHeaders,
+    },
   });
-
 }
