@@ -58,6 +58,10 @@ export async function onRequest(context) {
     adUnits.push(generateAdUnit(adVast, 'end', 'postroll'));
   }
 
+  if (!preroll && !midroll && !postroll) {
+    adUnits.push("\n<!-- Turn on at least one kind of ad -->\n");
+  }
+
   const vmapOutput =
 `<?xml version="1.0" encoding="UTF-8"?>
 <vmap:VMAP xmlns:vmap="http://www.iab.net/videosuite/vmap" version="1.0">

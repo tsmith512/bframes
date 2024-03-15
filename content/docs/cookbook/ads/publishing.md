@@ -119,6 +119,8 @@ playlist.
     .querySelectorAll('input[type="radio"], input[type="checkbox"]')
     .forEach(e => e.addEventListener('change', update));
 
+  update();
+
 </script>
 
 ## References
