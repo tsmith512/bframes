@@ -13,12 +13,14 @@ bookHidden: true
 
 ## Get the Preview Manifest
 
-Get the _video ID_ currently being played and request a short preview manifest.
+Get the _video ID_ of the current broadcast and request a short preview manifest.
 This page [uses a Worker](https://github.com/tsmith512/bframes/blob/trunk/functions/api/liveOnDemand/status.ts)
-to make two Stream API calls: one to confirm that the live input is connected
-and a second to find the current recording.
+to make two Stream API calls:
 
-<pre id="preview-manifest-url"></pre>
+1. Confirm that the live input is connected
+2. Get the current video ID which will be used for the clip
+
+<textarea class="output" id="preview-manifest-url" rows="4"></textarea>
 <button id="preview-manifest">Fetch Preview Manifest</button>
 <script>
   document.getElementById('preview-manifest').addEventListener('click', async (e) => {
@@ -48,14 +50,57 @@ and a second to find the current recording.
 Lots of implementation options for this. Here's one way to do it: use HLS.js to
 play the preview clip and let a user pick a start time and duration.
 
-{{< raw >}}
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
 <video controls id="preview-video"></video>
-<br /><button id="preview-playback">Load Preview Video</button>
-<br />Start time: <input type="number" id="preview-start" /> <button id="preview-time-capture">Get from Player</button>
-<br />Clip duration: <input type="number" id="preview-duration" value="60" />
-<br />Clip URL: <button id="preview-make-clip">Generate</button>
-<pre id="clip-base-url"></pre>
+
+<table>
+  <tr>
+    <th><button id="preview-playback">Load Preview Video</button></th>
+    <td>
+      Play the preview manifest generated above.
+    </td>
+  </tr>
+  <tr>
+    <th>Preview Offset</th>
+    <td>
+      <input type="number" id="preview-offset" disabled />
+      <br /><em>Seconds into the broadcast when the preview starts</em>
+    </td>
+  </tr>
+  <tr>
+    <th>Clip Start Time</th>
+    <td>
+      <input type="number" id="preview-start" />
+      <button id="preview-time-capture">Get from Player</button>
+      <br /><em>Seconds into the preview to start the clip</em>
+    </td>
+  </tr>
+  <tr>
+    <th>Clip Duration</th>
+    <td>
+      <input type="number" id="preview-duration" value="60" />
+      <br /><em>Up to 60 seconds</em>
+    </td>
+  </tr>
+  <tr>
+    <th><button id="preview-make-clip">Generate Clip URL</button></th>
+    <td>
+      <textarea id="clip-base-url" rows="6" class="output"></textarea>
+    </td>
+  </tr>
+</table>
+
+<script>
+  const previewButton = document.getElementById('preview-playback');
+  const previewOffset = document.getElementById('preview-offset');
+  const previewTimeCapture = document.getElementById('preview-time-capture');
+  const previewStart = document.getElementById('preview-start');
+  const previewDuration = document.getElementById('preview-duration');
+  const previewGenerateUrl = document.getElementById('preview-make-clip');
+  const clipBaseUrl = document.getElementById('clip-base-url');
+</script>
+
+{{< raw >}}
 <script>
   const video = document.getElementById('preview-video');
   // FIRST IDEA: MODIFY THE XHR OBJECT
@@ -63,21 +108,14 @@ play the preview clip and let a user pick a start time and duration.
     // @TODO: THIS NEVER EXECUTES...??
     xhr.loadend = function () {
       console.log(xhr);
-      const x = xhr.getResponseHeader('clip-start-seconds');
-      if (x) { console.log(x)}
-      console.log(xhr.readyState);
     }
     // @TODO: THIS NEVER EXECUTES --> so req's aren't being aborted... either?
     xhr.abort = function () {
       console.log(xhr);
-      const x = xhr.getResponseHeader('clip-start-seconds');
-      if (x) { console.log(x)}
-      console.log(xhr.readyState);
     }
     // @TODO: THIS FIRES FOR ALL MANIFEST/SEG REQS BUT READYSTATE IS ALWAYS 1...
     // AND NEVER ADVANCES...
     xhr.onreadystatechange = function () {
-      console.log(xhr.readyState);
       if (xhr.readyState === xhr.HEADERS_RECEIVED) {
         console.log(url);
         console.log(xhr.status);
@@ -96,16 +134,12 @@ play the preview clip and let a user pick a start time and duration.
         if (context.type == 'manifest') {
           var onSuccess = callbacks.onSuccess;
           callbacks.onSuccess = function (response, stats, context, networkDetails) {
-            // @TODO: THIS IS NOT A RESPONSE OBJECT, THERE ARE NO HEADERS HERE
-            console.log(response);
-            console.log(context);
-            console.log(networkDetails);
+            // console.log(networkDetails);
             // @TODO: ^^ This isn't in the default example from the docs, but it
             // is a fourth argument passed to this handler and it is the XHR
             // and it DOES advance to ReadyState 4...
-            console.log(networkDetails.getResponseHeader('clip-start-seconds'))
-            // @TODO: ^^ This does exist but is blocked from client-side usage
-            // by CORS.
+            window.currentPreviewStart = parseInt(networkDetails.getResponseHeader('clip-start-seconds'));
+            previewOffset.value = window.currentPreviewStart;
             onSuccess(response, stats, context);
           };
         }
@@ -119,18 +153,11 @@ play the preview clip and let a user pick a start time and duration.
     pLoader: pLoader,
   });
 
-  const previewButton = document.getElementById('preview-playback');
-  const previewTimeCapture = document.getElementById('preview-time-capture');
-  const previewStart = document.getElementById('preview-start');
-  const previewDuration = document.getElementById('preview-duration');
-  const previewGenerateUrl = document.getElementById('preview-make-clip');
-  const clipBaseUrl = document.getElementById('clip-base-url');
-
+  // Start playback of the preview manifest:
   previewButton.addEventListener('click', (e) => {
     e.preventDefault();
     if (window?.currentVideoUrl) {
       const videoSrc = window.currentVideoUrl + '/manifest/video.m3u8?duration=3m';
-      previewButton.disabled = true;
       if (Hls.isSupported()) {
         hls.loadSource(videoSrc);
         hls.attachMedia(video);
@@ -142,11 +169,14 @@ play the preview clip and let a user pick a start time and duration.
     }
   });
 
+  // Grab the time into the preview where the user is, fill in the form
   previewTimeCapture.addEventListener('click', (e) => {
     e.preventDefault();
     previewStart.value = Math.floor(video.currentTime);
   });
 
+  // Generate the clip URL. We'll need the video ID, the offset of the preview
+  // and the time into the preview where the user marked.
   previewGenerateUrl.addEventListener('click', (e) => {
     if (!previewStart.value) {
       clipBaseUrl.innerText = 'Need a start time';
@@ -158,10 +188,47 @@ play the preview clip and let a user pick a start time and duration.
       clipBaseUrl.innerText = 'Fetch preview manifest and start playback.';
       return;
     }
-    const url = `${window.currentVideoUrl}/manifest/clip.m3u8?time=${previewStart.value}s&duration=${previewDuration.value}s`;
 
-    clipBaseUrl.innerText = url;
+    window.clipUrl =
+      `${window.currentVideoUrl}/manifest/clip.m3u8` +
+      `?time=${parseInt(previewStart.value) + window.currentPreviewStart}s` +
+      `&duration=${previewDuration.value}s`;
+
+    clipBaseUrl.innerText = window.clipUrl;
   });
-
 </script>
 {{< /raw >}}
+
+## Watch the Clip
+
+{{< raw >}}
+<video controls id="clip-video"></video>
+<br /><button id="clip-start">Play Clip</button>
+
+<script>
+  const videoClip = document.getElementById('clip-video');
+
+  const hlsClip = new Hls({});
+
+  document.getElementById('clip-start').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!window?.clipUrl) {
+      alert('Generate a clip above first');
+      return;
+    }
+
+    if (Hls.isSupported()) {
+      hlsClip.loadSource(window.clipUrl);
+      hlsClip.attachMedia(videoClip);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      videoClip.src = window.clipUrl;
+    }
+  });
+</script>
+{{< /raw >}}
+
+## Download the MP4
+
+{{< hint info >}}
+Coming soon
+{{< /hint >}}

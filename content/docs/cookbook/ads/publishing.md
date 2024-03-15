@@ -119,7 +119,8 @@ playlist.
     .querySelectorAll('input[type="radio"], input[type="checkbox"]')
     .forEach(e => e.addEventListener('change', update));
 
-  update();
+  // Run this on load. It's an event handler so pass a dummy preventDefault
+  update({ preventDefault: () => {}});
 
 </script>
 
