@@ -1,0 +1,56 @@
+<div id="liveondemand-controls">
+  <div>
+    <div class="liveondemand-indicator"></div>
+    <strong>Sample live broadcast:</strong>
+    <span id="liveondemand-status">checking...</span>
+  </div>
+  <div>
+    <button id="liveondemand-start">Start</button>
+  </div>
+</div>
+
+<script>
+  const controlsEl = document.getElementById('liveondemand-controls');
+  const statusEl = document.getElementById('liveondemand-status');
+  const startEl = document.getElementById('liveondemand-start');
+
+  const update = async () => {
+    fetch('/api/liveOnDemand/status')
+    .then(r => {
+      if (!r.ok) {
+        controlsEl.className = 'errored';
+        statusEl.innerText = 'error';
+        return;
+      }
+
+      r.json().then(payload => {
+        if (payload.state === 'connected') {
+          controlsEl.className = 'active';
+          statusEl.innerText = 'active';
+          startEl.disabled = true;
+        } else if (payload.state === 'disconnected') {
+          controlsEl.className = 'inacive';
+          statusEl.innerHTML = 'offline';
+          startEl.disabled = false;
+        };
+      });
+    });
+  };
+
+  update();
+  const poll = setInterval(() => {
+    update();
+  }, 15000);
+
+  startEl.addEventListener('click', (e) => {
+    e.preventDefault();
+    fetch('/api/liveOnDemand/start', {
+      method: 'POST',
+      body: '',
+    });
+    // @TODO: There's a considerable delay between the server starting
+    // ffmpeg and activity in the player. Would be good to have an
+    // "in-between" state here.
+  });
+
+</script>

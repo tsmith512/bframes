@@ -4,3 +4,7 @@ bookCollapseSection: true
 ---
 
 # Live Broadcasts
+
+{{< liveOnDemandControls >}}
+
+{{< liveOnDemandPlayer >}}

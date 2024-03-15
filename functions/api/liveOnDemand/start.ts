@@ -34,13 +34,19 @@ export async function onRequest(context) {
   const response = await fetch(env.LIVE_ON_DEMAND_ENDPOINT);
 
   if (!response.ok) {
-    return new Response('Upstream API error querying LiveOnDemand endpoint', {status: 500});
+    return new Response('Upstream API error querying LiveOnDemand endpoint', {
+      status: 500,
+      headers: new Headers(corsHeaders),
+    });
   }
 
   const state: {active: boolean} = await response.json();
 
   if (state.active) {
-    return new Response('LiveOnDemand is already running.', {status: 200});
+    return new Response('LiveOnDemand is already running.', {
+      status: 200,
+      headers: new Headers(corsHeaders),
+    });
   }
 
   const start = await fetch(env.LIVE_ON_DEMAND_ENDPOINT, {
@@ -49,8 +55,14 @@ export async function onRequest(context) {
   });
 
   if (start.ok) {
-    return new Response('LiveOnDemand started', {status: 200});
+    return new Response('LiveOnDemand started', {
+      status: 200,
+      headers: new Headers(corsHeaders),
+    });
   } else {
-    return new Response('Could not start LiveOnDemand', {status: 500});
+    return new Response('Could not start LiveOnDemand', {
+      status: 500,
+      headers: new Headers(corsHeaders),
+    });
   }
 }
