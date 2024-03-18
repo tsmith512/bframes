@@ -1,9 +1,8 @@
 ---
 title: Pricing
 bookToC: false
-bookHidden: true
 ---
 
-<div id="root"></div>
+<div id="root" class="pricing-calculator"></div>
 
 <script src="/pricing-calculator.js"></script>

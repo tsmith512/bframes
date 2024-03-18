@@ -65,4 +65,14 @@ textarea.output {
   font-family: "ibm plex mono", monospace
 }
 
+.pricing-calculator {
+  input[type="text"], input[type="number"], select {
+    box-sizing: content-box;
+    height: 28px;
+    margin: 0.125rem 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid var(--gray-500)
+  }
+}
+
 @import "syntax";
