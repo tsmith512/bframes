@@ -11,6 +11,9 @@ bookHidden: true
 
 {{< liveOnDemandPlayer >}}
 
+_Playback can take up to a minute to start once requested,_ and this feature is
+best demonstrated at least a few minutes into the broadcast.
+
 ## Get the Preview Manifest
 
 Get the _video ID_ of the current broadcast and request a short preview manifest.
@@ -229,6 +232,27 @@ play the preview clip and let a user pick a start time and duration.
 
 ## Download the MP4
 
-{{< hint info >}}
-Coming soon
-{{< /hint >}}
+You can also download an MP4 of the clip.
+
+{{< raw >}}
+<textarea class="output" id="clip-download-url" rows="4"></textarea>
+<button id="clip-download-url-generate">Generate Download URL</button>
+
+<p>
+  <a id="clip-download-link" href="javascript:alert('Build a clip first.')">Download MP4</a>
+</p>
+
+<script>
+  document.getElementById('clip-download-url-generate').addEventListener('click', (e) => {
+    e.preventDefault();
+    const downloadUrl =
+      `${window.currentVideoUrl}/clip.mp4` +
+      `?time=${parseInt(previewStart.value) + window.currentPreviewStart}s` +
+      `&duration=${previewDuration.value}s` +
+      `&filename=clip-test-${previewDuration.value}s.mp4`;
+
+    document.getElementById('clip-download-url').innerText = downloadUrl;
+    document.getElementById('clip-download-link').href = downloadUrl;
+  });
+</script>
+{{< / raw >}}
