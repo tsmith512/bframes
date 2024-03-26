@@ -3,6 +3,10 @@ video, img, iframe {
   display: block;
 }
 
+video {
+  width: 100%;
+}
+
 pre, code {
   font-size: 0.825em;
 }
