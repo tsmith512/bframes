@@ -15,7 +15,7 @@
   const startEl = document.getElementById('liveondemand-start');
 
   const update = async () => {
-    fetch('/api/liveOnDemand/status')
+    fetch('{{ getenv "HUGO_API_HOST" }}/api/liveOnDemand/status')
     .then(r => {
       if (!r.ok) {
         controlsEl.className = 'errored';
@@ -44,7 +44,7 @@
 
   startEl.addEventListener('click', (e) => {
     e.preventDefault();
-    fetch('/api/liveOnDemand/start', {
+    fetch('{{ getenv "HUGO_API_HOST" }}/api/liveOnDemand/start', {
       method: 'POST',
       body: '',
     });
