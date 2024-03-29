@@ -28,7 +28,7 @@ to make two Stream API calls:
 <script>
   document.getElementById('preview-manifest').addEventListener('click', async (e) => {
     e.preventDefault();
-    const status = await fetch('{{ getenv "HUGO_API_HOST" }}/api/liveOnDemand/status');
+    const status = await fetch('{{< HUGO_API_HOST >}}/api/liveOnDemand/status');
     if (status.ok) {
       const data = await status.json();
       if (data.state !== 'connected') {
