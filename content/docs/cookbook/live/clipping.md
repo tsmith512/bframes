@@ -106,29 +106,13 @@ play the preview clip and let a user pick a start time and duration.
 {{< raw >}}
 <script>
   const video = document.getElementById('preview-video');
-  // FIRST IDEA: MODIFY THE XHR OBJECT
-  const xhrModify = (xhr, url) => {
-    // @TODO: THIS NEVER EXECUTES...??
-    xhr.loadend = function () {
-      console.log(xhr);
-    }
-    // @TODO: THIS NEVER EXECUTES --> so req's aren't being aborted... either?
-    xhr.abort = function () {
-      console.log(xhr);
-    }
-    // @TODO: THIS FIRES FOR ALL MANIFEST/SEG REQS BUT READYSTATE IS ALWAYS 1...
-    // AND NEVER ADVANCES...
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === xhr.HEADERS_RECEIVED) {
-        console.log(url);
-        console.log(xhr.status);
-        const clipStart = xhr.getResponseHeader('clip-start-seconds');
-        console.log(clipStart);
-      }
-    };
-  };
 
-  // SECOND IDEA: OVERRIDE THE PLAYLIST LOADER CLASS TO INSPECT IT ON SUCCESS
+  // new Hls() --> xhrSetup --> xhr.onreadystatechange should have been a good
+  // way to do this, but the callback never got called after the headers were
+  // received. Switched to doing this by overriding the playlist loader.
+
+  // Instead, override the pLoader (playlist loader) to modify the handler for
+  // receiving the manifest and grab the header there.
   class pLoader extends Hls.DefaultConfig.loader {
     constructor(config) {
       super(config);
@@ -136,14 +120,21 @@ play the preview clip and let a user pick a start time and duration.
       this.load = function (context, config, callbacks) {
         if (context.type == 'manifest') {
           var onSuccess = callbacks.onSuccess;
+          // copy the existing onSuccess handler so we can fire it later.
+
           callbacks.onSuccess = function (response, stats, context, networkDetails) {
-            // console.log(networkDetails);
-            // @TODO: ^^ This isn't in the default example from the docs, but it
-            // is a fourth argument passed to this handler and it is the XHR
-            // and it DOES advance to ReadyState 4...
-            window.currentPreviewStart = parseInt(networkDetails.getResponseHeader('clip-start-seconds'));
+            // The fourth argument here is undocumented in HLS.js but contains
+            // the response object for the manifest fetch, which gives us headers:
+
+            window.currentPreviewStart =
+              parseInt(networkDetails.getResponseHeader('clip-start-seconds'));
+            // Save the start time of the preview manifest
+
             previewOffset.value = window.currentPreviewStart;
+            // Put the value in our text field example
+
             onSuccess(response, stats, context);
+            // And fire the exisint success handler.
           };
         }
         load(context, config, callbacks);
@@ -152,7 +143,6 @@ play the preview clip and let a user pick a start time and duration.
   }
 
   const hls = new Hls({
-    xhrSetup: xhrModify,
     pLoader: pLoader,
   });
 
@@ -168,7 +158,7 @@ play the preview clip and let a user pick a start time and duration.
         video.src = videoSrc;
       }
     } else {
-      console.log('Fetch the preview manifest first');
+      alert('Fetch the preview manifest first');
     }
   });
 
@@ -182,13 +172,13 @@ play the preview clip and let a user pick a start time and duration.
   // and the time into the preview where the user marked.
   previewGenerateUrl.addEventListener('click', (e) => {
     if (!previewStart.value) {
-      clipBaseUrl.innerText = 'Need a start time';
+      alert('Need a start time');
       return;
     } else if (!previewDuration.value || parseInt(previewDuration.value) > 60) {
-      clipBaseUrl.innerText = 'Need a preview duration set and no more than 60 seconds';
+      alert('Need a preview duration set and no more than 60 seconds');
       return;
     } else if (!window.currentVideoUrl) {
-      clipBaseUrl.innerText = 'Fetch preview manifest and start playback.';
+      alert('Fetch preview manifest and start playback.');
       return;
     }
 
@@ -211,7 +201,7 @@ play the preview clip and let a user pick a start time and duration.
 <script>
   const videoClip = document.getElementById('clip-video');
 
-  const hlsClip = new Hls({});
+  const hlsClip = new Hls();
 
   document.getElementById('clip-start').addEventListener('click', (e) => {
     e.preventDefault();
@@ -234,7 +224,6 @@ play the preview clip and let a user pick a start time and duration.
 
 You can also download an MP4 of the clip.
 
-{{< raw >}}
 <textarea class="output" id="clip-download-url" rows="4"></textarea>
 <button id="clip-download-url-generate">Generate Download URL</button>
 
@@ -242,9 +231,15 @@ You can also download an MP4 of the clip.
   <a id="clip-download-link" href="javascript:alert('Build a clip first.')">Download MP4</a>
 </p>
 
+{{< raw >}}
 <script>
   document.getElementById('clip-download-url-generate').addEventListener('click', (e) => {
     e.preventDefault();
+    if (!window?.clipUrl) {
+      alert('Generate a clip above first');
+      return;
+    }
+
     const downloadUrl =
       `${window.currentVideoUrl}/clip.mp4` +
       `?time=${parseInt(previewStart.value) + window.currentPreviewStart}s` +
