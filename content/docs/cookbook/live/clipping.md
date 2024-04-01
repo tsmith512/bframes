@@ -107,11 +107,7 @@ play the preview clip and let a user pick a start time and duration.
 <script>
   const video = document.getElementById('preview-video');
 
-  // new Hls() --> xhrSetup --> xhr.onreadystatechange should have been a good
-  // way to do this, but the callback never got called after the headers were
-  // received. Switched to doing this by overriding the playlist loader.
-
-  // Instead, override the pLoader (playlist loader) to modify the handler for
+  // Override the pLoader (playlist loader) to modify the handler for
   // receiving the manifest and grab the header there.
   class pLoader extends Hls.DefaultConfig.loader {
     constructor(config) {
@@ -251,3 +247,79 @@ You can also download an MP4 of the clip.
   });
 </script>
 {{< / raw >}}
+
+---
+
+# Scratchwork
+
+## Trouble Reading the Header
+
+{{< hint danger >}}
+Things that did not work:
+{{< /hint >}}
+
+- Using the `xhrSetup` property in `new Hls()` to add a callback to the loader's
+  `onreadystatechange` event wherein we could read the header from the manifest
+  request.
+  - This didn't work because `onreadystatechange` was only ever called for
+    `READY_STATE` of 0, and not again.
+  - Similarly, the `loadend` and `abort` events were never fired either.
+
+``` js
+// DO NOT COPY. This was attempted but did not work.
+const xhrModify = (xhr, url) => {
+  // THIS NEVER EXECUTES
+  xhr.loadend = function () {
+    console.log(xhr);
+  }
+  // THIS NEVER EXECUTES
+  xhr.abort = function () {
+    console.log(xhr);
+  }
+  // THIS FIRES FOR ALL MANIFEST/SEG REQS BUT READYSTATE IS ALWAYS 1
+  // AND NEVER ADVANCES...
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === xhr.HEADERS_RECEIVED) {
+      console.log(url);
+      console.log(xhr.status);
+      const clipStart = xhr.getResponseHeader('clip-start-seconds');
+      console.log(clipStart);
+    }
+  };
+};
+
+const hls = new Hls({
+  xhrSetup: xhrModify,
+});
+```
+
+
+- Using `fetch()` to load the manifest manually, which makes getting the header
+  easy. Then using `response.blob()` and `URL.createObjectURL` to pass the fetched
+  content directly to HLS.js
+  - This didn't work because the manifest contains relaive links to ABR playlists
+    and media segments. The `blob:` URL has a different host/path structure so
+    all those subsequent requests were 404.
+
+``` js
+// DO NOT COPY. This was attempted but did not work.
+
+const videoSrc = window.currentVideoUrl + '/manifest/video.m3u8?duration=3m';
+const response = await fetch(videoSrc);
+
+window.currentPreviewStart =
+  parseInt(response.headers.get('clip-start-seconds'));
+// Save the start time of the preview manifest
+
+const manifestBlob = await response.blob();
+const manifestBlobUrl = URL.createObjectURL(manifestBlob);
+// THIS WORKS TO LOAD THE PRIMARY MANIFEST BUT BECAUSE THE ABR PLAYLISTS AND
+// MEDIA SEGMENTS THEREIN ARE RELATIVE LINKS, NONE OF THEM LOAD.
+
+if (Hls.isSupported()) {
+  hls.loadSource(manifestBlobUrl);
+  hls.attachMedia(video);
+} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+  video.src = manifestBlobUrl;
+}
+```
