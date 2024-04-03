@@ -11,6 +11,23 @@ bookHidden: true
 
 {{< liveOnDemandPlayer >}}
 
+<table>
+  <tr>
+    <th>Stream Subdomain</th>
+    <td>
+      <input type="text" id="stream-subdomain" value="https://customer-igynxd2rwhmuoxw8.cloudflarestream.com" disabled />
+      <br /><em>Customer subdomain for playback</em>
+    </td>
+  </tr>
+  <tr>
+    <th>Input or Video ID</th>
+    <td>
+      <input type="text" id="input-id" value="18ddc08c7ece443a6e1f0bb968f9138a" disabled />
+      <br /><em>Seconds into the broadcast when the preview starts</em>
+    </td>
+  </tr>
+</table>
+
 _Playback can take up to a minute to start once requested,_ and this feature is
 best demonstrated at least a few minutes into the broadcast.
 
@@ -21,13 +38,18 @@ This page [uses a Worker](https://github.com/tsmith512/bframes/blob/trunk/functi
 to make two Stream API calls:
 
 1. Confirm that the live input is connected
-2. Get the current video ID which will be used for the clip
+2. ~~Get the current video ID which will be used for the clip~~
 
 <textarea class="output" id="preview-manifest-url" rows="4"></textarea>
 <button id="preview-manifest">Fetch Preview Manifest</button>
 <script>
   document.getElementById('preview-manifest').addEventListener('click', async (e) => {
     e.preventDefault();
+    window.streamSubdomain = document.getElementById('stream-subdomain').value;
+    window.streamInputId = document.getElementById('input-id').value;
+    window.currentLiveUrl = `${window.streamSubdomain}/${window.streamInputId}`;
+
+    // This could be done differently... just check to see if we're playing
     const status = await fetch('{{< HUGO_API_HOST >}}/api/liveOnDemand/status');
     if (status.ok) {
       const data = await status.json();
@@ -38,12 +60,8 @@ to make two Stream API calls:
         return false;
       }
       console.log(`Live input ${data.input} recording to ${data.current}.`);
-      // Stash this for the next script
-      window.currentVideo = data.current;
-      window.currentVideoUrl =
-        `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/${data.current}`;
       document.getElementById('preview-manifest-url').innerText =
-        `${window.currentVideoUrl}/manifest/video.m3u8?duration=3m`;
+        `${window.currentLiveUrl}/manifest/video.m3u8?duration=3m`;
     }
   });
 </script>
@@ -119,15 +137,21 @@ play the preview clip and let a user pick a start time and duration.
           // copy the existing onSuccess handler so we can fire it later.
 
           callbacks.onSuccess = function (response, stats, context, networkDetails) {
+            console.log(networkDetails);
             // The fourth argument here is undocumented in HLS.js but contains
             // the response object for the manifest fetch, which gives us headers:
 
             window.currentPreviewStart =
-              parseInt(networkDetails.getResponseHeader('clip-start-seconds'));
+              parseInt(networkDetails.getResponseHeader('preview-start-seconds'));
             // Save the start time of the preview manifest
 
             previewOffset.value = window.currentPreviewStart;
             // Put the value in our text field example
+
+            window.currentVideoId =
+              networkDetails.getResponseHeader('stream-media-id');
+
+            window.currentVideoUrl = `${window.streamSubdomain}/${window.currentVideoId}`;
 
             onSuccess(response, stats, context);
             // And fire the exisint success handler.
@@ -145,8 +169,8 @@ play the preview clip and let a user pick a start time and duration.
   // Start playback of the preview manifest:
   previewButton.addEventListener('click', (e) => {
     e.preventDefault();
-    if (window?.currentVideoUrl) {
-      const videoSrc = window.currentVideoUrl + '/manifest/video.m3u8?duration=3m';
+    if (window?.currentLiveUrl) {
+      const videoSrc = window.currentLiveUrl + '/manifest/video.m3u8?duration=3m';
       if (Hls.isSupported()) {
         hls.loadSource(videoSrc);
         hls.attachMedia(video);
@@ -173,8 +197,8 @@ play the preview clip and let a user pick a start time and duration.
     } else if (!previewDuration.value || parseInt(previewDuration.value) > 60) {
       alert('Need a preview duration set and no more than 60 seconds');
       return;
-    } else if (!window.currentVideoUrl) {
-      alert('Fetch preview manifest and start playback.');
+    } else if (!window.currentVideoId) {
+      alert('Fetch preview manifest.');
       return;
     }
 
