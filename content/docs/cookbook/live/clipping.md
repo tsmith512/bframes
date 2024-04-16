@@ -1,6 +1,5 @@
 ---
 title: Clipping
-bookHidden: true
 ---
 
 # Live Instant Clipping
