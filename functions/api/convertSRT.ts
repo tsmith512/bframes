@@ -1,6 +1,3 @@
-// Be sure to also set nodejs_compat flag in wrangler.toml or Pages Functions config
-// import { Buffer } from 'node:buffer';
-
 export async function onRequest(context) {
   // Contents of context object
   const {

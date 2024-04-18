@@ -7,12 +7,73 @@ title: Caption Converter
 Stream supports the VTT caption/subtitle format, but it is easy to conver SRT
 files. This utility can help.
 
-## Converter
+## SRT Input
 
-**SRT Input**
+<table style="width: 100%">
+  <tr>
+    <th>File</th>
+    <td><input type="file" id="srt-file" name="srt-file" accept=".srt" /></td>
+  </tr>
+  <tr>
+    <th>Sample</th>
+    <td><button id="sample">Load a Sample</button></td>
+  </tr>
+</table>
 
-<textarea class="input" id="srt-in">
-1
+**Manual Input**
+<textarea class="input" id="srt-in"></textarea>
+
+<button id="generate">Generate</button>
+
+
+## Converted VTT Output
+
+<textarea class="output" id="vtt-out"></textarea>
+
+<a id="save" class="hidden">Save to File</a>
+
+
+<script>
+const fileEl = document.getElementById('srt-file');
+const srtEl = document.getElementById('srt-in');
+const vttEl = document.getElementById('vtt-out');
+const sampleBtn = document.getElementById('sample');
+const genBtn = document.getElementById('generate');
+const saveLink = document.getElementById('save');
+
+const srtToVtt = async (input) => {
+  return await fetch('{{< HUGO_API_HOST >}}/api/convertSRT', {
+    method: 'POST',
+    body: input,
+  })
+  .then(response => response.text());
+};
+
+fileEl.addEventListener('change', (event) => {
+  const reader = new FileReader();
+  reader.addEventListener('load', async (e) => {
+    srtEl.value = e.target.result;
+
+    // Click the generate button lol
+    genBtn.click();
+  });
+  reader.readAsText(fileEl.files[0]);
+});
+
+
+genBtn.addEventListener('click', async (event) => {
+  event.preventDefault();
+  vttEl.value = await srtToVtt(srtEl.value);
+
+  const outFile = new File([vttEl.value], 'subtitles.vtt', { type: 'text/vtt' });
+  const fileUrl = window.URL.createObjectURL(outFile);
+  saveLink.href = fileUrl;
+  saveLink.download = 'subtitles.vtt';
+  saveLink.classList.remove('hidden');
+});
+
+sampleBtn.addEventListener('click', (e) => {
+  srtEl.value = `1
 00:02:17,440 --> 00:02:20,375
 Senator, we're making
 our <b>final</b> approach into {u}Coruscant{/u}.
@@ -36,44 +97,21 @@ v
 6
 00:02:45,000 --> 00:02:48,295
 [man 3] <i>♪The admiral
-begins his expedition♪</i>
-</textarea>
-
-<button id="generate">Generate</button>
-
-**Converted VTT Output**
-
-<textarea class="output" id="vtt-out"></textarea>
-
-<a id="save" class="hidden">Save to File</a>
-
-
-<script>
-const srtEl = document.getElementById('srt-in');
-const vttEl = document.getElementById('vtt-out');
-const genBtn = document.getElementById('generate');
-const saveLink = document.getElementById('save');
-
-const srtToVtt = async (input) => {
-  return await fetch('{{< HUGO_API_HOST >}}/api/convertSRT', {
-    method: 'POST',
-    body: input,
-  })
-  .then(response => response.text());
-};
-
-genBtn.addEventListener('click', async (event) => {
-  event.preventDefault();
-  vttEl.value = await srtToVtt(srtEl.value);
-
-  const outFile = new File([vttEl.value], 'subtitles.vtt', { type: 'text/vtt' });
-  const fileUrl = window.URL.createObjectURL(outFile);
-  saveLink.href = fileUrl;
-  saveLink.download = 'subtitles.vtt';
-  saveLink.classList.remove('hidden');
+begins his expedition♪</i>`;
+  genBtn.click();
 });
 
 </script>
+
+
+## Add To Your Application
+
+There are a few ways to use this utility on other pages.
+
+- POST plaintext SRT to `{{< HUGO_API_HOST >}}/api/convertSRT` for one-time use.
+- Grab the `srtToVtt()` and `convertCue()` functions in the
+  [Worker that powers this demo](https://github.com/tsmith512/bframes/blob/trunk/functions/api/convertSRT.ts).
+  They can be used in frontend or backend.
 
 ## Current Limitations
 
