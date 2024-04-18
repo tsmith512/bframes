@@ -61,12 +61,20 @@ pre.mermaid {
   }
 }
 
+textarea.input,
 textarea.output {
   width: 100%;
   padding: 0.25rem;
-  background: var(--gray-100);
   border-radius: 0.25rem;
-  font-family: "ibm plex mono", monospace
+  font-family: "ibm plex mono", monospace;
+
+  &:not([rows]) {
+    min-height: 200px;
+  }
+}
+
+textarea.output {
+  background: var(--gray-100);
 }
 
 .pricing-calculator {

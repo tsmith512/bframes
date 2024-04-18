@@ -7,7 +7,33 @@ title: SRT to VTT
 Stream supports the VTT caption/subtitle format, but it is easy to conver SRT
 files:
 
-<textarea class="input" id="srt-in"></textarea>
+<textarea class="input" id="srt-in">
+1
+00:02:17,440 --> 00:02:20,375
+Senator, we're making
+our <b>final</b> approach into {u}Coruscant{/u}.
+
+2
+00:02:20,476 --> 00:02:22,501
+{b}Very good, {i}Lieutenant{/i}{/b}.
+
+3
+00:02:24,948 --> 00:02:26,247 X1:201 X2:516 Y1:397 Y2:423
+<font color="#fbff1c">Whose side is time on?</font>
+
+4
+00:02:36,389 --> 00:02:39,290 X1:203 X2:511 Y1:359 Y2:431
+v
+
+5
+00:02:41,000 --> 00:02:43,295
+[speaks Icelandic]
+
+6
+00:02:45,000 --> 00:02:48,295
+[man 3] <i>♪The admiral
+begins his expedition♪</i>
+</textarea>
 <textarea class="output" id="vtt-out"></textarea>
 
 <script>
@@ -51,16 +77,23 @@ const convertCue = (input) => {
   return [number, time, content].join('\n');
 };
 
-srtEl.addEventListener('change', async (event) => {
+const srtToVtt = (input) => {
   // Get input, trim leading/trailing whitepace, and remove carriage returns
-  const srt = event.target.value.trim().replace(/\r+/g, '');
+  const srt = input.trim().replace(/\r+/g, '');
 
   // Split the cue stack
   const srtCues = srt.split('\n\n');
 
   const vttCues = srtCues.map(cue => convertCue(cue))
-  vttEl.value = ['WEBVTT FILE', ...vttCues].join('\n\n');
+  return ['WEBVTT FILE', ...vttCues].join('\n\n');
+};
+
+srtEl.addEventListener('change', (event) => {
+  vttEl.value = srtToVtt(event.target.value);
 });
+
+// Run once on example content
+vttEl.value = srtToVtt(srtEl.value);
 </script>
 
 ## Acknowledgements
@@ -70,3 +103,4 @@ srtEl.addEventListener('change', async (event) => {
 - https://github.com/silviapfeiffer/silviapfeiffer.github.io/blob/master/index.html
 - https://www.loc.gov/preservation/digital/formats/fdd/fdd000569.shtml?loclr=blogsig
 - https://www.w3.org/TR/webvtt1/
+- https://docs.lokalise.com/en/articles/5365539-subrip-srt#h_8a44b1b142
