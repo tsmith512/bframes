@@ -17,6 +17,14 @@ export async function onRequest(context) {
     return new Response('Please POST SRT content in the request body.', { status: 405 });
   }
 
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    })
+  }
+
   const input = await request.text();
 
   const output = srtToVtt(input);
@@ -24,12 +32,19 @@ export async function onRequest(context) {
   return new Response(output, {
     status: 200,
     headers: {
+      'Access-Control-Allow-Origin': '*',
       'Content-Type': 'text/vtt',
       'Cache-Control': 'max-age=0, no-cache, must-revalidate',
     }
   });
 }
 
+/**
+ * Convert a single SRT cue to a VTT cue, with some limited sanitation
+ *
+ * @param input (string) A single SRT cue
+ * @returns (string) A matching VTT cue
+ */
 const convertCue = (input: string): string => {
   // EXAMPLES:
 
@@ -68,6 +83,12 @@ const convertCue = (input: string): string => {
   return [newNumber, newTime, newContent].join('\n');
 };
 
+/**
+ * Take an SRT text track and convert it to VTT
+ *
+ * @param input (string) an SRT text track
+ * @returns (string) the converted VTT text track
+ */
 const srtToVtt = (input: string): string => {
   // Get input, trim leading/trailing whitepace, and remove carriage returns
   const srt = input.trim().replace(/\r+/g, '');
