@@ -14,44 +14,59 @@ files:
 const srtEl = document.getElementById('srt-in');
 const vttEl = document.getElementById('vtt-out');
 
-/**
- * @param utf8str
- * @returns string
- */
-const toVTT = (utf8str) => utf8str
-  .replace(/\{\\([ibu])\}/g, '</$1>')
-  .replace(/\{\\([ibu])1\}/g, '<$1>')
-  .replace(/\{([ibu])\}/g, '<$1>')
-  .replace(/\{\/([ibu])\}/g, '</$1>')
-  .replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, '$1.$2')
-  .concat('\r\n\r\n');
-/**
- * @param resource
- * @returns Promise<string>
- */
-const toWebVTT = async (input) => {
-  // if (!(FileReader)) {
-  //   throw (new Error(`${moduleName}: No FileReader constructor found`));
-  // }
-  if (!TextDecoder) {
-    throw (new Error(`${moduleName}: No TextDecoder constructor found`));
-  }
-  // if (!(resource instanceof Blob)) {
-  //   throw new Error(`${moduleName}: Expecting resource to be a Blob but something else found.`);
-  // }
-  let text;
-  const vttString = 'WEBVTT FILE\r\n\r\n'; // leading text
-  try {
-    text = vttString.concat(toVTT(srtEl.value));
-  } catch (e) {
-    // const buffer = await blobToBufferOrString(resource, 'buffer');
-    const decode = new TextDecoder('utf-8').decode(input);
-    text = vttString.concat(toVTT(decode));
-  }
-  return text;
+const convertCue = (input) => {
+  // EXAMPLES:
+
+  // 1
+  // 00:00:03,395 --> 00:00:06,728
+  // Captain's Log, Stardate 44286.5.
+
+  // 2
+  // 00:00:06,765 --> 00:00:09,165
+  // The <i>Enterprise</i> is conducting
+  // a security survey
+
+  let [number, time, ...content] = input.split('\n');
+
+  // @TODO: Validate cue number?
+
+  // @TODO: Validate timestamp?
+  time = time
+    // Milliseconds should be noted with a period, not comma
+    .replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, '$1.$2')
+    // @TODO: Remove coordinates for now
+    .replace(/[XY][12]:.*/g, '')
+  ;
+
+  content = content
+    // @TODO: Eliminate newlines (spec suggestion but sometimes breaks editorially desired?)
+    .join(' ')
+    // Remove HTML tags that aren't <i> <b> or <u>
+    .replace(/<\/?[^ibu/][^>]*>/gi, '')
+    // Convert {ibu} syntax to HTML tag
+    .replace(/\{([ibu])\}/g, '<$1>')
+    .replace(/\{\/([ibu])\}/g, '</$1>')
+  ;
+
+  return [number, time, content].join('\n');
 };
 
 srtEl.addEventListener('change', async (event) => {
-  vttEl.value = await toWebVTT(event.target.value);
+  // Get input, trim leading/trailing whitepace, and remove carriage returns
+  const srt = event.target.value.trim().replace(/\r+/g, '');
+
+  // Split the cue stack
+  const srtCues = srt.split('\n\n');
+
+  const vttCues = srtCues.map(cue => convertCue(cue))
+  vttEl.value = ['WEBVTT FILE', ...vttCues].join('\n\n');
 });
 </script>
+
+## Acknowledgements
+
+- https://github.com/imshaikot/srt-webvtt
+- https://www.webvtt.org/
+- https://github.com/silviapfeiffer/silviapfeiffer.github.io/blob/master/index.html
+- https://www.loc.gov/preservation/digital/formats/fdd/fdd000569.shtml?loclr=blogsig
+- https://www.w3.org/TR/webvtt1/
