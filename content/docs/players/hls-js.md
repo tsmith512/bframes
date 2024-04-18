@@ -33,3 +33,85 @@ title: "HLS.js"
   }
 </script>
 {{< /raw >}}
+
+## Implementation Notes
+
+### Media Retries
+
+{{< hint warning >}}
+
+HLS.js _will not_ attempt to retry downloading a segment in the case of an error,
+even an error that may be transient or incendental.
+
+{{< /hint >}}
+
+See [HLS.js Docs on Fatal Error Recovery](https://github.com/video-dev/hls.js/blob/master/docs/API.md#fatal-error-recovery)
+and their example player code's implementaiton of
+[automatic error recovery](https://github.com/video-dev/hls.js/blob/master/demo/main.js#L1065-L1093).
+In short, any interrupted segment download will cause HLS.js to _stop_ and require
+the user to manually restart playback unless you do something like this in an
+error handler:
+
+``` js
+hls.on(Hls.Events.ERROR, function (event, data) {
+  if (data.fatal) {
+    switch (data.type) {
+      case Hls.ErrorTypes.MEDIA_ERROR:
+        console.log('fatal media error encountered, try to recover');
+        hls.recoverMediaError();
+        break;
+      case Hls.ErrorTypes.NETWORK_ERROR:
+        console.error('fatal network error encountered', data);
+        // In the case of a network error (timeout, failed download, etc)
+        // Immediately trying to restart loading could cause loop loading.
+
+        // Consider modifying loading policies to best fit your asset and network
+        // conditions (manifestLoadPolicy, playlistLoadPolicy, fragLoadPolicy).
+
+        // Consider using a counter or something to try recoverMediaError() on a
+        // limited basis.
+        break;
+      default:
+        // cannot recover
+        hls.destroy();
+        break;
+    }
+  }
+});
+```
+
+The `recoverMediaError()` method is a shorthand to detatch and reattach the media
+element. The [demo code](https://github.com/video-dev/hls.js/blob/master/demo/main.js#L1065-L1093)
+also includes a `swapAudioCodec()` attempt to recover.
+
+Taking the above example and adding in logic to make additional attempts using
+the `swapAudioCodec()` method and/or by waiting 3 seconds.
+
+``` typescript
+hls.on(Hls.Events.ERROR, function(event, data) {
+  if (data.fatal) {
+    switch (data.type) {
+      case Hls.ErrorTypes.MEDIA_ERROR:
+        const now = performance.now();
+        if (
+          !recoverDecodingErrorDate ||
+          now - recoverDecodingErrorDate > 3000
+        ) {
+          recoverDecodingErrorDate = now;
+          hls.recoverMediaError();
+        } else {
+          if (
+            !recoverSwapAudioCodecDate ||
+            now - recoverSwapAudioCodecDate > 3000
+          ) {
+            recoverSwapAudioCodecDate = now;
+            hls.swapAudioCodec();
+            hls.recoverMediaError();
+          }
+        }
+        break;
+
+      // ...
+```
+
+Consider also checking/tweaking the [default `LoadPolicy` values](https://github.com/video-dev/hls.js/blob/master/docs/API.md#fragloadpolicy--keyloadpolicy--certloadpolicy--playlistloadpolicy--manifestloadpolicy--steeringmanifestloadpolicy) for your use-case.

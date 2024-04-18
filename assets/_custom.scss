@@ -1,5 +1,10 @@
 video, img, iframe {
   max-width: 100%;
+  display: block;
+}
+
+video {
+  width: 100%;
 }
 
 pre, code {
@@ -15,6 +20,62 @@ pre.mermaid {
 
   svg {
     margin: 0 auto;
+  }
+}
+
+.footer-info {
+  margin-top: 2rem;
+  border-top: 1px solid #ccc;
+  padding-top: 2rem;
+
+  font-size: 0.75rem;
+  color: #999;
+}
+
+#liveondemand-controls {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  border-inline-start: 0.25rem solid var(--gray-200);
+  border-radius: 0.25rem;
+  background: var(--gray-100);
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.liveondemand-indicator {
+  display: inline-block;
+  vertical-align: baseline;
+  width: 0.75rem;
+  height: 0.75em;
+  border-radius: 50%;
+  background-color: var(--gray-500);
+  margin-right: 0.25rem;
+
+  .errored & {
+    background: #C00;
+  }
+
+  .active & {
+    background: #0C0;
+  }
+}
+
+textarea.output {
+  width: 100%;
+  padding: 0.25rem;
+  background: var(--gray-100);
+  border-radius: 0.25rem;
+  font-family: "ibm plex mono", monospace
+}
+
+.pricing-calculator {
+  input[type="text"], input[type="number"], select {
+    box-sizing: content-box;
+    height: 28px;
+    margin: 0.125rem 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid var(--gray-500)
   }
 }
 

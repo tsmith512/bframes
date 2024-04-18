@@ -1,0 +1,33 @@
+<div style="position: relative; padding-top: 56.25%;">
+  <iframe
+    src=""
+    style="border: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;"
+    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+    allowfullscreen="true"
+    id="liveondemand-player"
+  ></iframe>
+</div>
+
+<script src="https://embed.cloudflarestream.com/embed/sdk.latest.js"></script>
+
+<script>
+  window.player = null;
+  // @TODO: Currently pulling the live ID to use in the player so it persists
+  // across start/stop/restart events. But some functionality would be better
+  // with the current recording ID instead...
+  fetch('{{ getenv "HUGO_API_HOST" }}/api/liveOnDemand/status')
+  .then(r => {
+    if (!r.ok) {
+      return;
+    }
+    r.json().then(payload => {
+      console.log(payload);
+      if (payload.state === 'connected' && payload.current) {
+        // @TODO: Why did Hugo strip this line at the slashes when it was a literal?
+        const url = 'https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/' + payload.input + '/iframe';
+        document.getElementById('liveondemand-player').src = url;
+        window.player = Stream(document.getElementById('liveondemand-player'));
+      }
+    });
+  });
+</script>

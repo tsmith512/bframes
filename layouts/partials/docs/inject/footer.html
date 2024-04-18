@@ -1,12 +1,6 @@
-{{ if .Page.Store.Get "hasMermaid" }}
-  <script type="module">
-    import mermaid from '/vendor/mermaid/package/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-      startOnLoad: true,
-      theme: 'neutral',
-      themeVariables: {
-        fontFamily: "IBM Plex Sans,Helvetica,Arial,sans-serif",
-      },
-    });
-  </script>
-{{ end }}
+<div class="footer-info">
+  Scribbled by <a href="https://tsmith.com">TSmith</a>
+  for <a href="https://www.cloudflare.com/products/cloudflare-stream/">Stream</a>.
+  Be sure to check out <a href="https://developers.cloudflare.com/stream">the official documentation</a>
+  first.
+</div>

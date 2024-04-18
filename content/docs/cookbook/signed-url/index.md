@@ -61,7 +61,7 @@ requires signed URLs to be viewed. Replacing that video ID in the URL with a sig
 URL token will make it playable.
 
 This form can send a Video ID to a Worker that will generate a signed URL for a
-video. Give it a try.
+video using my signing key. Give it a try.
 
 <div>
   <form>
@@ -97,3 +97,6 @@ video. Give it a try.
     });
   </script>
 </div>
+
+[Read the code.](https://github.com/tsmith512/bframes/blob/trunk/functions/api/getSignedURL.ts) It's a "Pages Function," but it's just a Worker script within
+this repository.

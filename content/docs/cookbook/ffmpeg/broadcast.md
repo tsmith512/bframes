@@ -6,7 +6,7 @@ title: Broadcast
 
 ## Render a Clock as a Test Signal
 
-``` powershell
+```
 
 .\ffmpeg.exe -re -f lavfi -i color=color=black:size=1280x720:r=30 `
   -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 `
