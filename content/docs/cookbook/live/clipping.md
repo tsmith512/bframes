@@ -6,6 +6,9 @@ title: Clipping
 
 ## Start a Live Broadcast
 
+To use this demo, click the "Start" button if there isn't a broadcast in progress,
+then step through each section below.
+
 {{< liveOnDemandControls >}}
 
 {{< liveOnDemandPlayer >}}
@@ -22,7 +25,7 @@ title: Clipping
     <th>Input or Video ID</th>
     <td>
       <input type="text" id="input-id" value="18ddc08c7ece443a6e1f0bb968f9138a" disabled />
-      <br /><em>Seconds into the broadcast when the preview starts</em>
+      <br /><em>Live Input ID</em>
     </td>
   </tr>
 </table>
@@ -32,15 +35,14 @@ best demonstrated at least a few minutes into the broadcast.
 
 ## Get the Preview Manifest
 
-Get the _video ID_ of the current broadcast and request a short preview manifest.
-This page [uses a Worker](https://github.com/tsmith512/bframes/blob/trunk/functions/api/liveOnDemand/status.ts)
-to make two Stream API calls:
+Optionally, create a preview manifest to allow a user to replay recent content
+and select a start-time for a clip. Append a `duration` argument to the
+manifest URL to make a preview manifest:
 
-1. Confirm that the live input is connected
-2. ~~Get the current video ID which will be used for the clip~~
+**Preview Manifest URL Pattern:** `https://customer-<CODE>.cloudflarestream.com/<VIDEO_ID||INPUT_ID>/manifest/video.m3u8?duration=<NNm|s>`
 
 <textarea class="output" id="preview-manifest-url" rows="4"></textarea>
-<button id="preview-manifest">Fetch Preview Manifest</button>
+<button id="preview-manifest">Create Preview Manifest URL</button>
 <script>
   document.getElementById('preview-manifest').addEventListener('click', async (e) => {
     e.preventDefault();
@@ -68,7 +70,8 @@ to make two Stream API calls:
 ## Use Preview to Select Start and Duration
 
 Lots of implementation options for this. Here's one way to do it: use HLS.js to
-play the preview clip and let a user pick a start time and duration.
+play the preview manifest and let a user pick a start time and duration to make
+a clip.
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
 <video controls id="preview-video"></video>
@@ -109,6 +112,11 @@ play the preview clip and let a user pick a start time and duration.
     </td>
   </tr>
 </table>
+
+**Clip Manifest URL Pattern:** `https://customer-<CODE>.cloudflarestream.com/<VIDEO_ID>/manifest/clip.m3u8?time=<NNs>&duration=<NNs>`
+
+The code below includes how to override HLS.js's loader to get the Video ID
+and preview start time from the response headers in the manifest loader.
 
 <script>
   const previewButton = document.getElementById('preview-playback');
@@ -249,6 +257,8 @@ You can also download an MP4 of the clip.
 <p>
   <a id="clip-download-link" href="javascript:alert('Build a clip first.')">Download MP4</a>
 </p>
+
+**MP4 Download URL Pattern:** `https://customer-<CODE>.cloudflarestream.com/<VIDEO_ID>/clip.mp4?time=<NNs>&duration=<NNs>&filename=<FILENAME>.mp4`
 
 {{< raw >}}
 <script>
