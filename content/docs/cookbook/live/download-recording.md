@@ -44,6 +44,10 @@ _([Just need a short clip?]({{< ref clipping.md >}}))_
 _Download ten minutes from a given manifest, starting thirty minutes in:_
 
 ```
+# Fast - Stream Copy from DASH Manifest
+ffmpeg -ss 00:30:00 -t 00:10:00 -i "https://customer-<CODE>.cloudflarestream.com/<VIDEO_ID>/manifest/video.mpd" -c copy output.mp4
+
+# Precise - Transcoding from HLS Manifest
 ffmpeg -i "https://customer-<CODE>.cloudflarestream.com/<VIDEO_ID>/manifest/video.m3u8" -ss 00:30:00 -t 00:10:00 -acodec aac -vcodec libx264 output.mp4
 ```
 
@@ -51,16 +55,16 @@ ffmpeg -i "https://customer-<CODE>.cloudflarestream.com/<VIDEO_ID>/manifest/vide
 - Duration: `-t HH:MM:SS` specifies how long the output should be
 
 There are some gotchas when [Seeking with FFMPEG](http://trac.ffmpeg.org/wiki/Seeking).
-Specifying the `-ss` seek before the input performs a much faster input seek, but
-seems to cause either the audio or video track to be discarded from the output.
-Instead, this demo specifies the seek on the _output_ side, which is slower (input
-still has to be processed), but it retains both tracks.
+Specifying the `-ss` seek before the input performs a much faster input seek.
 
-_Also,_ when doing a simple `-c copy` stream copy, I kept losing either audio or
-video when pulling from HLS. Further, if the timestamp was not a keyframe
-boundary, it led to audio starting before the video. To retain both tracks,
-ensure audio and video start at the same time, and support splitting a GOP, I
-had to transcode. This is a slow operation, unfortunately. I'll keep testing.
+FFMPEG seems to drop either the audio or video track when seeking and doing a
+stream copy from the middle of an HLS manifest. Thus the two options:
+
+1. Stream copy and input seek from the DASH manifest is much faster, but if the
+   clip occurs in the middle of a GOP/keyframe interval, the initial frames
+   could be corrupted until the next keyframe.
+2. Output seek and transcoding from the HLS manifest is much slower, but ensures
+   audio and video start simultaneously in a good state.
 
 **To download only the audio** from a video, copy the audio but discard the video:
 
