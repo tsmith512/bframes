@@ -83,6 +83,13 @@ token with the key. This can be done in several ways, but here's one way.
       <br />Valid? <em id="rulesValid">Yes</em>
     </td>
   </tr>
+  <tr>
+    <th>Flags</th>
+    <td>
+      <textarea id="extraFlags" class="output"></textarea>
+      <br /><em>If provided, must be a JSON payload.</em>
+    </td>
+  </tr>
 </table>
 
 <textarea id="outputEl" class="output"></textarea>
@@ -95,6 +102,7 @@ token with the key. This can be done in several ways, but here's one way.
   expHalfHourBtn = document.getElementById('expHalfHour');
   accessRulesEl = document.getElementById('accessRules');
   accessRulesValidEl = document.getElementById('rulesValid');
+  extraFlagsEl = document.getElementById('extraFlags');
   outputEl = document.getElementById('outputEl');
 
   const validateAccessRules = () => {
@@ -152,7 +160,15 @@ token with the key. This can be done in several ways, but here's one way.
     };
 
     if (accessRulesEl.value && validateAccessRules()) {
-      data.accessRules = accessRulesEl.value;
+      data.accessRules = JSON.parse(accessRulesEl.value);
+    };
+
+    if (extraFlagsEl.value) {
+      try {
+        data.flags = JSON.parse(extraFlagsEl.value);
+      } catch (e) {
+        console.log("Flags field failed validation.");
+      }
     };
 
     const token = `${objectToBase64url(headers)}.${objectToBase64url(data)}`;
@@ -195,10 +211,10 @@ token with the key. This can be done in several ways, but here's one way.
 {{< / raw >}}
 
 <script>
-  [subEl, kidEl, expEl, accessRulesEl].forEach((el) => {
+  [subEl, kidEl, expEl, accessRulesEl, extraFlagsEl].forEach((el) => {
     el.addEventListener('change', (e) => {
       if (validateAccessRules() && validateJWK()) {
-        // generateSignedURL();
+        generateSignedURL();
       }
     });
   });
