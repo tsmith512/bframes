@@ -152,7 +152,7 @@ token with the key. This can be done in several ways, but here's one way.
     };
 
     if (accessRulesEl.value && validateAccessRules()) {
-      data.accessRules = accessRulesEl.value;
+      data.accessRules = JSON.parse(accessRulesEl.value);
     };
 
     const token = `${objectToBase64url(headers)}.${objectToBase64url(data)}`;
@@ -198,7 +198,7 @@ token with the key. This can be done in several ways, but here's one way.
   [subEl, kidEl, expEl, accessRulesEl].forEach((el) => {
     el.addEventListener('change', (e) => {
       if (validateAccessRules() && validateJWK()) {
-        // generateSignedURL();
+        generateSignedURL();
       }
     });
   });
