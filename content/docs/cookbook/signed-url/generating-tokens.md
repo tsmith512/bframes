@@ -5,7 +5,7 @@ title: Generating Tokens
 # Generating Tokens
 
 {{< hint danger >}}
-Do not create signed URLs or send your signing key to client-side code. This
+Do not create signed URLs in or send your signing key to client-side code. This
 page is for experimenting. Creating Signed URLs should be done in a Worker or
 server-side application to protect the signing key.
 {{</hint>}}
@@ -85,7 +85,11 @@ token with the key. This can be done in several ways, but here's one way.
   </tr>
 </table>
 
+<p>Output:</p>
+
 <textarea id="outputEl" class="output"></textarea>
+
+<p><strong><a href="#" id="outputLink" target="_blank"></a></strong></p>
 
 <script>
   kidEl = document.getElementById('kid');
@@ -96,6 +100,7 @@ token with the key. This can be done in several ways, but here's one way.
   accessRulesEl = document.getElementById('accessRules');
   accessRulesValidEl = document.getElementById('rulesValid');
   outputEl = document.getElementById('outputEl');
+  outputLink = document.getElementById('outputLink');
 
   const validateAccessRules = () => {
     let value = false;
@@ -175,6 +180,9 @@ token with the key. This can be done in several ways, but here's one way.
     const signedToken = `${token}.${arrayBufferToBase64Url(signature)}`;
 
     outputEl.value = signedToken;
+
+    outputLink.href = `https://cloudflarestream.com/${signedToken}/watch`;
+    outputLink.innerText = 'Video Link';
   };
 
   // Utilities functions
