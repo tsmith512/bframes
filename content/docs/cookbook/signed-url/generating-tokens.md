@@ -85,11 +85,16 @@ token with the key. This can be done in several ways, but here's one way.
   </tr>
 </table>
 
-<p>Output:</p>
+## Step 3: Result
+
+The resulting JWT is used in place of the Video ID when creating URLs:
 
 <textarea id="outputEl" class="output"></textarea>
 
-<p><strong><a href="#" id="outputLink" target="_blank"></a></strong></p>
+Use the above to generate a link like `https://cloudflarestream.com/<TOKEN>/watch`,
+like this:
+
+<strong><a href="#" id="outputLink" target="_blank"></a></strong>
 
 <script>
   kidEl = document.getElementById('kid');
