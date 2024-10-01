@@ -72,7 +72,8 @@ token with the key. This can be done in several ways, but here's one way.
     <td>
       <input type="number" id="exp" />
       <br /><em>Provided as a Unix/epoch timestamp</em>
-      <br /><button id="expHalfHour">Now + 30 Minutes</button>
+      <br /><button id="expHalfHour">Now + 30 Min</button>
+      &ensp; <button id="expDay">Now + 24 Hr</button>
     </td>
   </tr>
   <tr>
@@ -102,6 +103,7 @@ like this:
   subEl = document.getElementById('sub');
   expEl = document.getElementById('exp');
   expHalfHourBtn = document.getElementById('expHalfHour');
+  expDayBtn = document.getElementById('expDay');
   accessRulesEl = document.getElementById('accessRules');
   accessRulesValidEl = document.getElementById('rulesValid');
   outputEl = document.getElementById('outputEl');
@@ -134,6 +136,12 @@ like this:
     event.preventDefault;
     const now = new Date().getTime() / 1000;
     expEl.value = Math.ceil(now) + (30 * 60);
+  });
+
+  expDayBtn.addEventListener('click', (event) => {
+    event.preventDefault;
+    const now = new Date().getTime() / 1000;
+    expEl.value = Math.ceil(now) + (60 * 60 * 24);
   });
 
   accessRulesEl.addEventListener('change', (event) => {
@@ -210,7 +218,7 @@ like this:
 <script>
   [subEl, kidEl, expEl, accessRulesEl].forEach((el) => {
     el.addEventListener('change', (e) => {
-      if (validateAccessRules() && validateJWK()) {
+      if (validateAccessRules() && validateJWK() && !!expEl.value) {
         generateSignedURL();
       }
     });
