@@ -12,9 +12,10 @@ export async function onRequest(context) {
 
 
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': request?.headers.get('origin') ?? '*',
     'Access-Control-Allow-Methods': '*',
     'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Credentials': 'true',
   };
 
   if (request.method === 'OPTIONS') {
