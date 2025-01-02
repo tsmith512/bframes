@@ -27,7 +27,9 @@ export async function onRequest(context) {
 
   const { searchParams } = new URL(request.url);
 
-  const adVideo = `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/6cc09e665af385810ff93cb0e52662b7`;
+  // Previous ad video was 6cc09e665af385810ff93cb0e52662b7 but it had a black
+  // background, which wasn't good for some tests/docs.
+  const adVideo = `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/18ab9ec14fd78db62ebc0b1117f4e398`;
   const skippable = searchParams.get('skippable') ? '00:00:10.000' : false;
 
   const vastOutput =
