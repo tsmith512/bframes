@@ -23,7 +23,7 @@ Notice the
 {{< raw >}}
 <div style="position: relative; padding-top: 56.25%;">
   <iframe
-    src="https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/46c8b7f480d410840758c1cb14a72e47/iframe?poster=https%3A%2F%2Fcustomer-igynxd2rwhmuoxw8.cloudflarestream.com%2F46c8b7f480d410840758c1cb14a72e47%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600&ad-url=https%3A%2F%2Fbframes.tsmith.com%2Fapi%2Fads%2FgetVast%3Fskippable%3Dtrue"
+    src="https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/46c8b7f480d410840758c1cb14a72e47/iframe?version=build.1736982850&poster=https%3A%2F%2Fcustomer-igynxd2rwhmuoxw8.cloudflarestream.com%2F46c8b7f480d410840758c1cb14a72e47%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600&ad-url=https%3A%2F%2Fbframes.tsmith.com%2Fapi%2Fads%2FgetVast%3Fskippable%3Dtrue"
     loading="lazy"
     style="border: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;"
     allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
@@ -52,7 +52,7 @@ Notice the
 {{< raw >}}
 <div style="position: relative; padding-top: 56.25%;">
   <iframe
-    src="https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/46c8b7f480d410840758c1cb14a72e47/iframe?poster=https%3A%2F%2Fcustomer-igynxd2rwhmuoxw8.cloudflarestream.com%2F46c8b7f480d410840758c1cb14a72e47%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600&ad-url=https%3A%2F%2Fbframes.tsmith.com%2Fapi%2Fads%2FgetVmap%3Fpre%3Dtrue%26mid%3D00%3A00%3A15%26post%3Dtrue%26skippable%3Dtrue"
+    src="https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/46c8b7f480d410840758c1cb14a72e47/iframe?version=build.1736982850&poster=https%3A%2F%2Fcustomer-igynxd2rwhmuoxw8.cloudflarestream.com%2F46c8b7f480d410840758c1cb14a72e47%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600&ad-url=https%3A%2F%2Fbframes.tsmith.com%2Fapi%2Fads%2FgetVmap%3Fpre%3Dtrue%26mid%3D00%3A00%3A15%26post%3Dtrue%26skippable%3Dtrue"
     loading="lazy"
     style="border: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;"
     allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
