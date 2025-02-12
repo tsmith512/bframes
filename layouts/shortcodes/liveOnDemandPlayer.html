@@ -23,8 +23,8 @@
     r.json().then(payload => {
       console.log(payload);
       if (payload.state === 'connected' && payload.current) {
-        // @TODO: Why did Hugo strip this line at the slashes when it was a literal?
-        const url = 'https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/' + payload.input + '/iframe';
+        const suffix = "{{- if eq (.Get 0) "dvr" -}}?dvrEnabled=true{{- end -}}";
+        const url = 'https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/' + payload.input + '/iframe' + suffix;
         document.getElementById('liveondemand-player').src = url;
         window.player = Stream(document.getElementById('liveondemand-player'));
       }
