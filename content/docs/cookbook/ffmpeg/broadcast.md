@@ -18,7 +18,7 @@ title: Broadcast
 
 If you get a `fontconfig` "file not found" error, confirm the `fontfile` path exists.
 
-## Render a Timestam as a Test Signal
+## Render a Timestamp as a Test Signal
 
 Relatedly, instead of a server-time clock, use an `HH:MM:SS.mmm` timestamp clock:
 
