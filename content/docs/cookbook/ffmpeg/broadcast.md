@@ -17,3 +17,15 @@ title: Broadcast
 ```
 
 If you get a `fontconfig` "file not found" error, confirm the `fontfile` path exists.
+
+## Render a Timestam as a Test Signal
+
+Relatedly, instead of a server-time clock, use an `HH:MM:SS.mmm` timestamp clock:
+
+```
+ffmpeg -re -f lavfi -i color=color=black:size=1280x720:r=30 -f lavfi \
+  -i anullsrc=channel_layout=stereo:sample_rate=44100 \
+  -vf "drawtext=fontsize=128:fontcolor=white:text='%{pts\:hms}':x=(w-text_w)/2:y=(h-text_h)/2" \
+  -codec:v libx264 -bf 0 -s:v 1920x1080 -codec:a aac -b:a 128k -f flv \
+  rtmps://live.cloudflare.com:443/live/RTMPS_STREAM_KEY_HERE
+```
