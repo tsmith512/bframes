@@ -40,23 +40,24 @@ upload:
   User -->> Stream: TUS Upload file to TUS URL
 ```
 
-## Your Worker or Server Side
+## Summary Code Samples
 
-This part needs to make an API call to Stream, so it needs to be made privately,
-not on an end-user device. Here's an example:
+### Your Worker or Server Side
+
+Once you know your user wants to do an upload, and you have the filesize of the
+file they want to upload, your backend or a work Worker makes an authenticated
+API call to Stream to provision the upload endpoint.
+
+Here's an example:
 
 ``` js
-// Example for how to provision an upload of a file stored locally. Likely, you
-// will not have this and may need to pass the file size to the script that
-// provisions the upload.
-import * as fs from "fs";
-var path = "/mnt/c/Users/TaylorSmith/Desktop/TEMP/aus-mobile.mp4";
-var file = fs.createReadStream(path);
-var size = fs.statSync(path).size;
+// @TODO: Your user needs to pass the filesize to you.
+const size = 123;
 
 // THIS PART RUNS ON THE SERVER
 
-const provisionEndpoint = "https://api.cloudflare.com/client/v4/accounts/ACCOUNT_TAG/stream?direct_user=true";
+const provisionEndpoint =
+  "https://api.cloudflare.com/client/v4/accounts/ACCOUNT_TAG/stream?direct_user=true";
 const options = {
   method: 'POST',
   headers: {
@@ -65,69 +66,63 @@ const options = {
     "Tus-Resumable": "1.0.0",
     "Upload-Length": size,
     "Upload-Metadata":
-      `maxdurationseconds ${btoa('600')}, name ${btoa('upload.mp4')},watermark ${btoa('71e39ae7cb66cce2301f5b221abe1e69')}`
+      `maxdurationseconds ${btoa('600')}, name ${btoa('new upload')}`
   },
 };
-console.log(`Upload-Metadata header: ${options.headers["Upload-Metadata"]}\n`);
 
 // Provision the Direct Creator Upload URL with Stream:
 const res = await fetch(provisionEndpoint, options);
 
 if (!res.ok) {
-  console.log(`Request failed ${res.status}\n`);
-  console.log(await res.text());
-  process.exit();
+  // @TODO: Catch request failures
 }
 
+// This is the endpoint to send back to the customer.
 const uploadEndpoint = res.headers.get('Location');
-
-console.log(`End user should upload to: ${uploadEndpoint}`);
-
-// Get them that location. This is the hostname you sent me in your last email.
 ```
 
-In short, making a request:
+In short, make a `POST` request:
 
-- To `https://api.cloudflare.com/client/v4/accounts/ACCOUNT_TAG/stream?direct_user=true`
-- With the `"Tus-Resumable": "1.0.0"` and `Upload-Length` headers
+- to `/client/v4/accounts/ACCOUNT_TAG/stream?direct_user=true`
+- with the `"Tus-Resumable": "1.0.0"` and `Upload-Length` headers
 
-will return an HTTP 201 response with a `Location` header, which the end-user
-can run a TUS upload to.
+On success, this returns an HTTP 201 response with a `Location` header, which
+the end-user can run a TUS upload to.
 
-## End-user / Creator Side
-
+### End-user / Creator Side
 
 ``` js
 import * as fs from "fs";
 import * as tus from "tus-js-client";
 
-// Specify location of file you would like to upload below
-var path = "/mnt/c/Users/TaylorSmith/Desktop/TEMP/aus-mobile.mp4";
+// @TODO: You likely have a file reference from however you determined the size
+var path = "/mnt/c/Users/TaylorSmith/Desktop/austin-mobile.mp4";
 var file = fs.createReadStream(path);
-var size = fs.statSync(path).size;
 
 const uploadEndpoint = '<PLACEHOLDER_FROM_SERVER>';
 
 // THIS PART RUNS ON THE CLIENT
-
 const uploadOptions = {
-  endpoint: uploadEndpoint, // This is the `Location` header from above
-  chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5 MB. Here we use 50 MB.
-  retryDelays: [0, 3000, 5000, 10000, 20000], // Indicates to tus-js-client the delays after which it will retry if the upload fails.
-  uploadSize: size,
+  endpoint: uploadEndpoint,
+    // ^ This is the `Location` header from above
+  chunkSize: 50 * 1024 * 1024,
+    // ^ Required a minimum chunk size of 5 MB. Here we use 50 MB.
+  retryDelays: [0, 3000, 5000, 10000, 20000],
   onError: function (error) {
     throw error;
   },
   onProgress: function (bytesUploaded, bytesTotal) {
-    var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-    console.log(bytesUploaded, bytesTotal, percentage + "%");
+    const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
+    // @TODO: Update a progress bar or text field
   },
   onSuccess: function () {
     console.log("Upload finished");
+    // @TODO: Indicate to user that the upload is finished
   },
   onAfterResponse: function (req, res) {
+    // Here's one way to capture the video ID as it is being uploaded.
     return new Promise((resolve) => {
-      var mediaIdHeader = res.getHeader("stream-media-id");
+      const mediaIdHeader = res.getHeader("stream-media-id");
       if (mediaIdHeader) {
         mediaId = mediaIdHeader;
       }
@@ -140,7 +135,7 @@ const upload = new tus.Upload(file, uploadOptions);
 upload.start();
 ```
 
-This example is using `tus-js-client` in a simple Node.js script. There are other
+This example uses `tus-js-client` in a simple Node.js script. There are other
 TUS implementations in other languages that can be used as well.
 
 ## A Working Example
