@@ -259,7 +259,6 @@ In your application's call to your API/backend, include the file size.
 
     // Populate the part 2 fields.
     document.getElementById('pt2filename').value = `${fileEl.files[0].name}`;
-    document.getElementById('pt2bytes').value = `${bytesEl.value}`;
     document.getElementById('pt2location').value = `${uploadEndpoint}`;
   });
 
@@ -277,9 +276,6 @@ upload the file to it directly. In this demo, we've selected the file already:
     <td>
       <p>
         <label>Selected File: <br /><input type="text" id="pt2filename" value="" disabled /></label>
-      </p>
-      <p>
-        <label>File Size: <br /><input type="number" id="pt2bytes" value="" disabled /></label>
       </p>
       <p>
         <label>Location: <br /><input type="text" id="pt2location" value="" disabled /></label>
@@ -308,19 +304,22 @@ upload the file to it directly. In this demo, we've selected the file already:
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@latest/dist/tus.min.js"></script>
 
 <script>
-  const pt2sizeEl = document.getElementById('pt2bytes');
   const pt2locationEl = document.getElementById('pt2location');
   const pt2progressEl = document.getElementById('pt2progress');
 
   document.getElementById('doTusUpload').addEventListener('click', async (e) => {
+    e.preventDefault();
+
     // For determining the video id.
     let mediaId = false;
 
     const uploadOptions = {
-      endpoint: pt2locationEl.value, // This is the `Location` header from above
-      chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5 MB. Here we use 50 MB.
-      retryDelays: [0, 3000, 5000, 10000, 20000], // Indicates to tus-js-client the delays after which it will retry if the upload fails.
-      uploadSize: pt2sizeEl.value,
+      endpoint: pt2locationEl.value,
+      // ^ This is the `Location` header from above
+      chunkSize: 50 * 1024 * 1024,
+      // ^ Required a minimum chunk size of 5 MB.
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      // ^ Delays after which it will retry if the upload fails.
       onError: function (error) {
         pt2progressEl.value += `\n\nError: ${error}`;
         throw error;
@@ -337,10 +336,6 @@ upload the file to it directly. In this demo, we've selected the file already:
       // One way to get the video ID from one of the TUS requests.
       onAfterResponse: function (req, res) {
         return new Promise((resolve) => {
-          if (mediaId) {
-            // We already got the video ID in another request.
-            return;
-          }
           var mediaIdHeader = res.getHeader("stream-media-id");
           if (mediaIdHeader) {
             mediaId = mediaIdHeader;
