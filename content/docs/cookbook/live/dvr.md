@@ -1,6 +1,5 @@
 ---
 title: DVR for Live
-bookCollapseSection: true
 ---
 
 # DVR for Live Broadcasts
