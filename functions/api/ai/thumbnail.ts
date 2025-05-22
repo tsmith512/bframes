@@ -57,13 +57,13 @@ export async function onRequest(context) {
 
     case "describe":
       content = await env.AI.run(
-				"@cf/unum/uform-gen2-qwen-500m",
-				{
-					image: [... new Uint8Array(await image.arrayBuffer()) ],
-					prompt: "Describe the setting and content of this image. If there are any people, describe what they are wearing.",
-					max_tokens: 256,
-				}
-			);
+        "@cf/unum/uform-gen2-qwen-500m",
+        {
+          image: [... new Uint8Array(await image.arrayBuffer()) ],
+          prompt: "Describe the setting and content of this image. If there are any people, describe what they are wearing.",
+          max_tokens: 256,
+        }
+      );
 
       break;
   }
