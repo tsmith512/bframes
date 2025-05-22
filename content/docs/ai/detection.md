@@ -51,25 +51,33 @@ Stream offers [Thumbnails](https://developers.cloudflare.com/stream/viewing-vide
   const timestamp = document.getElementById('timestamp');
   const go = document.getElementById('go');
 
+  const headline = document.getElementById('headline');
+  const image = document.getElementById('image');
+  const description = document.getElementById('description');
+  const content = document.getElementById('content');
+
   go.addEventListener('click', (e) => {
     e.preventDefault();
 
     const id = source.value;
     const time = timestamp.value;
-    document.getElementById('headline').innerText = `${id} at ${time}`;
+    headline.innerText = `${id} at ${time}`;
 
-    document.getElementById('image').setAttribute('src', `https://${root}/${id}/thumbnails/thumbnail.jpg?time=${time}&height=720`);
+    image.setAttribute('src', `https://${root}/${id}/thumbnails/thumbnail.jpg?time=${time}&height=720`);
+
+    description.innerText = 'Loading...';
+    content.innerText = 'Loading...';
 
     // Describe the scene. Uses @cf/unum/uform-gen2-qwen-500m
     (async () => {
       const data = await fetch(`/api/ai/thumbnail?id=${id}&time=${time}&mode=describe`).then(r => r.json());
-      document.getElementById('description').innerText = data.description;
+      description.innerText = data.description;
     })();
 
     // What is in this frame? Uses @cf/microsoft/resnet-50
     (async () => {
       const data = await fetch(`/api/ai/thumbnail?id=${id}&time=${time}&mode=detect`).then(r => r.json());
-      document.getElementById('content').innerText = JSON.stringify(data, null, 2);
+      content.innerText = JSON.stringify(data, null, 2);
     })();
   });
 </script>
