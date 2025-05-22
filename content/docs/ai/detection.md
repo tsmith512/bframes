@@ -16,10 +16,11 @@ These thumbnails can be run through AI inference models in a Worker.
       <th>Video ID</th>
       <td>
         <select id="source">
-          <option value="1a4b351e369ffe3cd3956b601a531c57">Halloween drone &amp; timelapse (4 minutes)</option>
-          <option value="b0a8b8df880936de8aa0533442accf82">Streaming Left 4 Dead 2 multiplayer (1.2 hours)</option>
-          <option value="30b87aa298d574589d2d4a3b784ace80">Conference report video diary (9 minutes)</option>
-          <option value="4d74d0d2cc215ec2a5b7a1f0f4813d19">Car shopping &amp; repair video diary (33 minutes)</option>
+          <option value="1a4b351e369ffe3cd3956b601a531c57">Halloween (4 min)</option>
+          <option value="b0a8b8df880936de8aa0533442accf82">Streaming Left 4 Dead 2 (1.2 hours)</option>
+          <option value="30b87aa298d574589d2d4a3b784ace80">Conference report (9 min)</option>
+          <option value="4d74d0d2cc215ec2a5b7a1f0f4813d19">Car shopping &amp; repair (33 min)</option>
+          <option value="c552052c7e1e2adf94013dbb3a176596">Spark wire arc (1.4 min)</option>
         </select>
       </td>
     </tr>
