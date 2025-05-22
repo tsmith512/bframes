@@ -8,65 +8,68 @@ Stream offers [Thumbnails](https://developers.cloudflare.com/stream/viewing-vide
 
 ## Pick a Video
 
-(TBD: Well, i'm hardcoding a test here.)
-
-{{< raw >}}
-<script>
-  const root = 'customer-igynxd2rwhmuoxw8.cloudflarestream.com';
-  const id = '1a4b351e369ffe3cd3956b601a531c57';
-  const duration = 240; //seconds
-</script>
-{{< / raw >}}
+<form>
+  <table>
+    <tr>
+      <th>Video ID</th>
+      <td>
+        <select id="source">
+          <option value="1a4b351e369ffe3cd3956b601a531c57">Halloween drone &amp; timelapse</option>
+          <option value="b0a8b8df880936de8aa0533442accf82">Streaming Left 4 Dead 2 multiplayer</option>
+          <option value="30b87aa298d574589d2d4a3b784ace80">Conference report video diary</option>
+          <option value="4d74d0d2cc215ec2a5b7a1f0f4813d19">Car shopping &amp; repair video diary</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th>Timestamp</th>
+      <td>
+        <input id="timestamp" type="text" value="5s" />
+        <br /><em>Examples: 1s, 5s, 3m</em>
+      </td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>
+        <button id="go">Analyze</button>
+      </td>
+    </tr>
+  </table>
+</form>
 
 ## Sample Thumbnails
 
-<h3 id="t1h"></h3>
-<img id="t1i" />
-<p id="t1d">Loading...</p>
-<pre id="t1c">Loading...</pre>
+<p id="headline" style="font-weight:bold">Make a selection above.</p>
+<img id="image" />
+<p id="description" class="output"></p>
+<pre id="content" class="output"></pre>
 
 <script>
-  const t1t = '5s';
-  document.getElementById('t1i').setAttribute('src', `https://${root}/${id}/thumbnails/thumbnail.jpg?time=${t1t}&height=720`);
+  const root = 'customer-igynxd2rwhmuoxw8.cloudflarestream.com';
 
-  document.getElementById('t1h').innerText = `${id} at ${t1t}`;
+  const source = document.getElementById('source');
+  const timestamp = document.getElementById('timestamp');
+  const go = document.getElementById('go');
 
-  // What is in this thumbnail? Uses @cf/microsoft/resnet-50
-  (async () => {
-    const t1cData = await fetch(`/api/ai/thumbnail?id=${id}&time=${t1t}&mode=detect`).then(r => r.json());
-    document.getElementById('t1c').innerText = JSON.stringify(t1cData, null, 2);
-  })();
+  go.addEventListener('click', (e) => {
+    e.preventDefault();
 
-  // Describe the scene. Uses @cf/unum/uform-gen2-qwen-500m
-  (async () => {
-    const t1cData = await fetch(`/api/ai/thumbnail?id=${id}&time=${t1t}&mode=describe`).then(r => r.json());
-    document.getElementById('t1d').innerText = t1cData.description;
-  })();
+    const id = source.value;
+    const time = timestamp.value;
+    document.getElementById('headline').innerText = `${id} at ${time}`;
 
-</script>
+    document.getElementById('image').setAttribute('src', `https://${root}/${id}/thumbnails/thumbnail.jpg?time=${time}&height=720`);
 
+    // Describe the scene. Uses @cf/unum/uform-gen2-qwen-500m
+    (async () => {
+      const data = await fetch(`/api/ai/thumbnail?id=${id}&time=${time}&mode=describe`).then(r => r.json());
+      document.getElementById('description').innerText = data.description;
+    })();
 
-<h3 id="t2h"></h3>
-<img id="t2i" />
-<p id="t2d">Loading...</p>
-<pre id="t2c">Loading...</pre>
-
-<script>
-  const t2t = '45s';
-  document.getElementById('t2i').setAttribute('src', `https://${root}/${id}/thumbnails/thumbnail.jpg?time=${t2t}&height=720`);
-
-  document.getElementById('t2h').innerText = `${id} at ${t2t}`;
-
-  // What is in this thumbnail? Uses @cf/microsoft/resnet-50
-  (async () => {
-    const t2cData = await fetch(`/api/ai/thumbnail?id=${id}&time=${t2t}&mode=detect`).then(r => r.json());
-    document.getElementById('t2c').innerText = JSON.stringify(t2cData, null, 2);
-  })();
-
-  // Describe the scene. Uses @cf/unum/uform-gen2-qwen-500m
-  (async () => {
-    const t2cData = await fetch(`/api/ai/thumbnail?id=${id}&time=${t2t}&mode=describe`).then(r => r.json());
-    document.getElementById('t2d').innerText = t2cData.description;
-  })();
-
+    // What is in this frame? Uses @cf/microsoft/resnet-50
+    (async () => {
+      const data = await fetch(`/api/ai/thumbnail?id=${id}&time=${time}&mode=detect`).then(r => r.json());
+      document.getElementById('content').innerText = JSON.stringify(data, null, 2);
+    })();
+  });
 </script>
