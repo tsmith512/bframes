@@ -27,5 +27,27 @@ export async function onRequest(context) {
 
   const { searchParams } = new URL(request.url);
 
-  return new Response(JSON.stringify(searchParams));
+  const id = searchParams.get('id');
+  const time = searchParams.get('time');
+
+  if (id === null || time === null) {
+    return new Response('ID and Time parameters required', { status: 400 });
+  }
+
+  const url = `https://cloudflarestream.com/${id}/thumbnails/thumbnail.jpg?height=720&time=${time}`;
+
+  const image = await fetch(url);
+
+  if (!image.ok) {
+    return new Response(`Stream error: ${image.statusText}`, { status: 500 });
+  }
+
+  const content = await env.AI.run(
+    "@cf/microsoft/resnet-50",
+    {
+      image: [... new Uint8Array(await image.arrayBuffer()) ],
+    }
+  );
+
+  return new Response(JSON.stringify(content));
 }

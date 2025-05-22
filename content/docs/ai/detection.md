@@ -25,12 +25,14 @@ Stream offers [Thumbnails](https://developers.cloudflare.com/stream/viewing-vide
 <pre id="t1c"></pre>
 
 <script>
-  const t1t = 5;
-  document.getElementById('t1i').setAttribute('src', `https://${root}/${id}/thumbnails/thumbnail.jpg?time=${t1t}s&height=720`);
+  const t1t = '5s';
+  document.getElementById('t1i').setAttribute('src', `https://${root}/${id}/thumbnails/thumbnail.jpg?time=${t1t}&height=720`);
 
-  const t1cData = await fetch(`/api/ai/detections?id=${id}&t=${t1t}`);
+  (async () => {
+    const t1cData = await fetch(`/api/ai/detection?id=${id}&t=${t1t}`);
 
-  console.log(t1cData.json());
+    console.log(t1cData.json());
+  })();
 
 </script>
 {{< / raw >}}
