@@ -44,10 +44,24 @@ export async function onRequest(context) {
 		  return acc.concat(' ', text.join(' '));
 		}, '');
 
-    const summary = await env.AI.run('@cf/facebook/bart-large-cnn', {
-      input_text: plaintext,
-      max_length: 512,
-    });
+    // This wasn't a summary as much as a repetition of the first couple sentences.
+    // const summary = await env.AI.run('@cf/facebook/bart-large-cnn', {
+    //   input_text: plaintext,
+    //   max_length: 512,
+    // });
+
+    const messages = [
+      {role: 'system', content: 'Summarize this video transcript'},
+      {role: 'user', content: plaintext},
+    ];
+
+    const summary = await env.AI.run("@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      {
+        messages,
+        stream: false,
+        max_tokens: 256,
+      }
+    );
 
   return new Response(JSON.stringify(summary, null, 2));
 }
