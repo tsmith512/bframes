@@ -92,39 +92,39 @@ This page sends a video ID and timestamp to a Pages Function, which pulls the
 same thumbnail displayed in the sample and runs it through Workers AI:
 
 ``` js
+// Grab the thumbnail from Stream
+const url = `https://cloudflarestream.com/${id}/thumbnails/thumbnail.jpg?height=720&time=${time}`;
+const image = await fetch(url);
 
-  const url = `https://cloudflarestream.com/${id}/thumbnails/thumbnail.jpg?height=720&time=${time}`;
+if (!image.ok) {
+  return new Response(`Stream error: ${image.statusText}`, { status: 500 });
+}
 
-  const image = await fetch(url);
+let content;
 
-  if (!image.ok) {
-    return new Response(`Stream error: ${image.statusText}`, { status: 500 });
-  }
+// Send the image to the requested model, then return the response:
+switch (mode) {
+  case "detect":
+    content = await env.AI.run(
+      "@cf/microsoft/resnet-50",
+      {
+        image: [... new Uint8Array(await image.arrayBuffer()) ],
+      }
+    );
+    break;
 
-  let content;
+  case "describe":
+    content = await env.AI.run(
+      "@cf/unum/uform-gen2-qwen-500m",
+      {
+        image: [... new Uint8Array(await image.arrayBuffer()) ],
+        prompt: "Describe the setting and content of this image. If there are any people, describe what they are wearing.",
+        max_tokens: 256,
+      }
+    );
 
-  switch (mode) {
-    case "detect":
-      content = await env.AI.run(
-        "@cf/microsoft/resnet-50",
-        {
-          image: [... new Uint8Array(await image.arrayBuffer()) ],
-        }
-      );
-      break;
+    break;
+}
 
-    case "describe":
-      content = await env.AI.run(
-        "@cf/unum/uform-gen2-qwen-500m",
-        {
-          image: [... new Uint8Array(await image.arrayBuffer()) ],
-          prompt: "Describe the setting and content of this image. If there are any people, describe what they are wearing.",
-          max_tokens: 256,
-        }
-      );
-
-      break;
-  }
-
-  return new Response(JSON.stringify(content, null, 2));
-``
+return new Response(JSON.stringify(content, null, 2));
+```

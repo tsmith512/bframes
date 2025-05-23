@@ -46,6 +46,7 @@ export async function onRequest(context) {
     // TQ4 Diary (33 minutes)
     'https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/4d74d0d2cc215ec2a5b7a1f0f4813d19/text/en.vtt?p=eyJ0eXBlIjoiZmlsZSIsInZpZGVvSUQiOiI0ZDc0ZDBkMmNjMjE1ZWMyYTViN2ExZjBmNDgxM2QxOSIsIm93bmVySUQiOjM0MjA5Mjc1LCJjcmVhdG9ySUQiOiJyb3V0ZW5vdGZvdW5kLmNvbSIsInRyYWNrIjoiZGY2NjlmMzc1NTE1OTJjZTAyN2UxZDhmMTI0NmQxMTQiLCJyZW5kaXRpb24iOiI1NzAwNTc0MjMiLCJtdXhpbmciOiI3NDQ0MzUyNzIifQ&s=WsKJNXA-w77DlMOUKR5hwpfChiHCllbDmVF9wqPCh8KqZMKrBFfCm8Okc0tnYg',
   ];
+
   const url = videos[parseInt(id)] ?? null;
 
   const captions = await fetch(url).then(res => res.text(), res => `Could not fetch captions: ${res.status} ${res.statusText}`);
@@ -61,7 +62,6 @@ export async function onRequest(context) {
 
   switch (model) {
     case "bart":
-      // This wasn't a summary as much as a repetition of the first couple sentences.
       summary = await env.AI.run('@cf/facebook/bart-large-cnn', {
         input_text: plaintext,
         max_length: 512,
