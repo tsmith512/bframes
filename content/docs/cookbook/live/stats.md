@@ -16,14 +16,14 @@ _Video playback may take up to 30 seconds to be available once started here._
 
 ## Connecting to the Debug Websocket
 
-<pre id="data" />
+<pre id="data"></pre>
 
 Using the RTMP key, open a websocket connection to this endpoint:
 
 {{< raw >}}
 <script>
 const dataEl = document.getElementById('data');
-const key = 'c0b90bd2e507cd8b4666d4ff5417cbbak18ddc08c7ece443a6e1f0bb968f9138a';
+const key = 'a85b21d55760d84181ceb577be4bc9ack168a3653a2f0394437b7c021cb198414';
 const x = new WebSocket(`wss://live-status.videodelivery.net/websocket/source/${key}/status`);
 x.addEventListener('message', (e) => {
   const data = JSON.parse(e.data)
@@ -34,8 +34,10 @@ x.addEventListener('message', (e) => {
 
 ## WIP
 
-- What is the `history` object that occasionally appears here? It has a key that
-  is neither the Input nor Video ID
-- Can we remove that?
-- Can we make this accessible by Input ID instead of RTMP key?
+The top-level object will always contain a key with the live input ID. Some
+messages will include keys for updates on live _output_ IDs, if defined to
+observe their connection status.
+
+- TBD `history` object
+- Can we make this accessible using a non-broadcast secret?
 - @TODO: Cycle this live input
