@@ -44,7 +44,7 @@ frames to be paged by their time. One simple way to achieve this:
     const now = Math.floor(player.currentTime * fps);
     const next = now + parseInt(e.target.dataset.skip);
     console.log(`Frame ${now} --> ${next}`);
-    player.currentTime = Math.ceil((next / fps) * 1000) / 1000;
+    player.currentTime = (Math.ceil((next / fps) * 1000) + 10) / 1000;
   }));
 
   document.addEventListener('load', () => {
