@@ -41,10 +41,20 @@ frames to be paged by their time. One simple way to achieve this:
 
   document.querySelectorAll('button').forEach(el => el.addEventListener('click', (e) => {
     e.preventDefault();
-    const now = Math.floor(player.currentTime * fps);
-    const next = now + parseInt(e.target.dataset.skip);
-    console.log(`Frame ${now} --> ${next}`);
-    player.currentTime = (Math.ceil((next / fps) * 1000) + 10) / 1000;
+
+    // What are we seeing now?
+    const nowS = player.currentTime;
+    const nowF = Math.floor(nowS * fps);
+
+    // Apply the button's frame advance/backup
+    const nextF = nowF + parseInt(e.target.dataset.skip);
+
+    // Given next frame: divide by framerate, add 10ms and round up --> new time
+    const nextS = (Math.ceil((nextF / fps) * 1000) + 10) / 1000;
+
+    // Reset player time and report
+    player.currentTime = nextS;
+    console.log(`Frame ${nowF} (${nowS}s) --> ${nextF} (${nextS}s)`);
   }));
 
   document.addEventListener('load', () => {
