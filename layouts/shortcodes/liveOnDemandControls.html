@@ -13,6 +13,7 @@
   const controlsEl = document.getElementById('liveondemand-controls');
   const statusEl = document.getElementById('liveondemand-status');
   const startEl = document.getElementById('liveondemand-start');
+  window.LODstatus = {};
 
   const update = async () => {
     fetch('{{ getenv "HUGO_API_HOST" }}/api/liveOnDemand/status')
@@ -24,6 +25,7 @@
       }
 
       r.json().then(payload => {
+        window.LODstatus = { ...payload };
         if (payload.state === 'connected') {
           controlsEl.className = 'active';
           statusEl.innerText = 'active';
@@ -40,7 +42,7 @@
   update();
   const poll = setInterval(() => {
     update();
-  }, 15000);
+  }, 5000);
 
   startEl.addEventListener('click', (e) => {
     e.preventDefault();
@@ -51,6 +53,7 @@
     // @TODO: There's a considerable delay between the server starting
     // ffmpeg and activity in the player. Would be good to have an
     // "in-between" state here.
+    setTimeout(update, 2000);
   });
 
 </script>

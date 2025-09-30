@@ -12,22 +12,18 @@
 
 <script>
   window.player = null;
-  // @TODO: Currently pulling the live ID to use in the player so it persists
-  // across start/stop/restart events. But some functionality would be better
-  // with the current recording ID instead...
-  fetch('{{ getenv "HUGO_API_HOST" }}/api/liveOnDemand/status')
-  .then(r => {
-    if (!r.ok) {
-      return;
+  // The liveOnDemandControls partial kicks this off and defines the object
+  const playerCheckStatus = () => {
+    if (window?.LODstatus && window.LODstatus.state === 'connected' && window.LODstatus.current) {
+      const suffix = "{{- if eq (.Get 0) "dvr" -}}?dvrEnabled=true{{- end -}}";
+      // Use the current vide/recording ID
+      const url = 'https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/' + window.LODstatus.current + '/iframe' + suffix;
+      document.getElementById('liveondemand-player').src = url;
+      window.player = Stream(document.getElementById('liveondemand-player'));
+    } else {
+      setTimeout(playerCheckStatus, 1000);
     }
-    r.json().then(payload => {
-      console.log(payload);
-      if (payload.state === 'connected' && payload.current) {
-        const suffix = "{{- if eq (.Get 0) "dvr" -}}?dvrEnabled=true{{- end -}}";
-        const url = 'https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/' + payload.input + '/iframe' + suffix;
-        document.getElementById('liveondemand-player').src = url;
-        window.player = Stream(document.getElementById('liveondemand-player'));
-      }
-    });
-  });
+  };
+  playerCheckStatus();
+
 </script>
