@@ -76,6 +76,14 @@ token with the key. This can be done in several ways, but here's one way.
       &ensp; <button id="expDay">Now + 24 Hr</button>
     </td>
   </tr>
+  </tr>
+  <tr>
+    <th>Allow Downloads?</th>
+    <td>
+      <input type="checkbox" id="download" />
+      <br /><em>Requires MP4 or Audio download to have already been generated.</em>
+    </td>
+  </tr>
   <tr>
     <th>Access Rules</th>
     <td>
@@ -88,7 +96,11 @@ token with the key. This can be done in several ways, but here's one way.
 
 ## Step 3: Result
 
-The resulting JWT is used in place of the Video ID when creating URLs:
+This is the input payload to sign:
+
+<textarea id="payloadEl" class="output"></textarea>
+
+The resulting JWT is used in place of the Video ID when creating any URLs:
 
 <textarea id="outputEl" class="output"></textarea>
 
@@ -102,10 +114,12 @@ like this:
   jwkEl = document.getElementById('jwk');
   subEl = document.getElementById('sub');
   expEl = document.getElementById('exp');
+  downloadEl = document.getElementById('download');
   expHalfHourBtn = document.getElementById('expHalfHour');
   expDayBtn = document.getElementById('expDay');
   accessRulesEl = document.getElementById('accessRules');
   accessRulesValidEl = document.getElementById('rulesValid');
+  payloadEl = document.getElementById('payloadEl');
   outputEl = document.getElementById('outputEl');
   outputLink = document.getElementById('outputLink');
 
@@ -169,6 +183,10 @@ like this:
       "exp": expEl.value,
     };
 
+    if (downloadEl.checked) {
+      data.downloadable = true;
+    }
+
     if (accessRulesEl.value && validateAccessRules()) {
       data.accessRules = JSON.parse(accessRulesEl.value);
     };
@@ -192,10 +210,14 @@ like this:
 
     const signedToken = `${token}.${arrayBufferToBase64Url(signature)}`;
 
+    payloadEl.value = JSON.stringify(data, null, 2);
     outputEl.value = signedToken;
 
     outputLink.href = `https://cloudflarestream.com/${signedToken}/watch`;
     outputLink.innerText = 'Video Link';
+
+    console.log(JSON.stringify(data, null, 2));
+    console.log(signedToken);
   };
 
   // Utilities functions
@@ -216,7 +238,7 @@ like this:
 {{< / raw >}}
 
 <script>
-  [subEl, kidEl, expEl, accessRulesEl].forEach((el) => {
+  [subEl, kidEl, expEl, downloadEl, accessRulesEl].forEach((el) => {
     el.addEventListener('change', (e) => {
       if (validateAccessRules() && validateJWK() && !!expEl.value) {
         generateSignedURL();
@@ -224,9 +246,11 @@ like this:
     });
   });
 
-  expHalfHourBtn.addEventListener('click', (event) => {
-    event.preventDefault();
-    generateSignedURL();
+  [expHalfHourBtn, expDayBtn].forEach((el) => {
+    el.addEventListener('click', (event) => {
+      event.preventDefault();
+      generateSignedURL();
+    });
   });
 
 </script>
