@@ -33,9 +33,9 @@ https://pub-9cf4bfca6e924401bd4ac87ca9174da6.r2.dev/aus-mobile.mp4
 With a simple width adjustment, this file can be right-sized for this layout, resulting in an optimized video of less than 4MB:
 
 <video controls>
-  <source src="https://bframes.tsmith.com/cdn-cgi/media/width=740/https://pub-9cf4bfca6e924401bd4ac87ca9174da6.r2.dev/aus-mobile.mp4" />
+  <source src="https://bframes.tsmith.net/cdn-cgi/media/width=740/https://pub-9cf4bfca6e924401bd4ac87ca9174da6.r2.dev/aus-mobile.mp4" />
 </video>
 
 ```
-https://bframes.tsmith.com/cdn-cgi/media/width=740/https://pub-9cf4bfca6e924401bd4ac87ca9174da6.r2.dev/aus-mobile.mp4
+https://bframes.tsmith.net/cdn-cgi/media/width=740/https://pub-9cf4bfca6e924401bd4ac87ca9174da6.r2.dev/aus-mobile.mp4
 ```
