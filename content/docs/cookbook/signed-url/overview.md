@@ -49,7 +49,7 @@ This video should not load:
 <div style="position: relative; padding-top: 56.25%;">
   <iframe
     id="player_iframe"
-    src="https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/ce800be43a9772f4bb02f35b860fb516/iframe"
+    src="https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/3a54d3d4330b9a33e7da8f517050527b/iframe"
     loading="lazy"
     style="border: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;"
     allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
@@ -57,7 +57,7 @@ This video should not load:
   ></iframe>
 </div>
 
-The video at `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/ce800be43a9772f4bb02f35b860fb516/iframe`
+The video at `https://customer-igynxd2rwhmuoxw8.cloudflarestream.com/3a54d3d4330b9a33e7da8f517050527b/iframe`
 requires signed URLs to be viewed. Replacing that video ID in the URL with a signed
 URL token will make it playable.
 
@@ -67,7 +67,7 @@ video using my signing key. Give it a try.
 <div>
   <form>
     <p>Video ID:</p>
-    <input type="text" id="video_id" value="ce800be43a9772f4bb02f35b860fb516" />
+    <input type="text" id="video_id" value="3a54d3d4330b9a33e7da8f517050527b" />
     <input type="submit" id="submit" value="Generate" />
     <p>Worker Results:</p>
     <pre id="output" style="word-wrap: break-word; overflow-x: hidden; white-space: break-spaces;"></pre>
